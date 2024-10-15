@@ -7,9 +7,6 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
 
-# Example Data (Cards)
-database = dict()
-
 class ButtonLayout(GridLayout):
     def __init__(self, card_list_ref, *args, **kwargs):
         super().__init__(cols=3, *args, **kwargs)
@@ -38,15 +35,17 @@ class ButtonLayout(GridLayout):
         if text:
             date = datetime.datetime.now()
             date_str = date.strftime("%Y%m%d_%H%M%S")
-            database[date_str] = text
+            self.card_list_ref.card_list[date_str] = text
             
             self.card_list_ref.populate_cards()
             
             popup.dismiss()
 
-class ScrollableCardList(ScrollView):
-    def __init__(self, *args, **kwargs):
+class CardListView(ScrollView):
+    def __init__(self, card_list, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        self.card_list = card_list
         
         # GridLayout for vertical scrolling cards
         self.card_grid = GridLayout(cols=1, size_hint_y=None)
@@ -55,7 +54,7 @@ class ScrollableCardList(ScrollView):
         
     def populate_cards(self):
         self.card_grid.clear_widgets()
-        sorted_entries = sorted(database.items(), key=lambda x: x[0], reverse=True)
+        sorted_entries = sorted(self.card_list.items(), key=lambda x: x[0], reverse=True)
         for key, entry in sorted_entries:
             self.add_card(key, entry)
 
@@ -65,14 +64,14 @@ class ScrollableCardList(ScrollView):
         self.card_grid.add_widget(card_button)
         
 class MainLayout(GridLayout):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, card_list, *args, **kwargs):
         super().__init__(cols=1, *args, **kwargs)
         
         # Top Section: Date label
         self.add_widget(Label(text="2024-10-16", size_hint_y=None, height=50))
         
         # Middle Section: Scrollable Cards (Vertical Scroll)
-        cards_view = ScrollableCardList(size_hint_y=None, height=300)
+        cards_view = CardlistView(card_list, size_hint_y=None, height=300)
         self.add_widget(cards_view)
         
         # Bottom Section: 3 buttons in grid layout

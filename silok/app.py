@@ -4,6 +4,6 @@ from main_layout import MainLayout
 
 class SilokApp(App):
     def build(self):
-        self.database = None
+        self.card_list = {}
         
-        return MainLayout()
+        return MainLayout(self.card_list)
