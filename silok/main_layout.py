@@ -15,14 +15,20 @@ class ButtonLayout(GridLayout):
         
         self.cards_view = cards_view
         
-        write_button = Button(text='Write')
-        write_button.bind(on_release=lambda x: self.open_popup())
+        brief_button = Button(text='Brief')
+        brief_button.bind(on_release=lambda x: self.open_popup("Brief"))
         
-        self.add_widget(write_button)
-        self.add_widget(Button(text="Edit"))
-        self.add_widget(Button(text="Delete"))
+        log_button = Button(text='Log')
+        log_button.bind(on_release=lambda x: self.open_popup("Log"))
+        
+        review_button = Button(text='Review')
+        review_button.bind(on_release=lambda x: self.open_popup("Review"))
+        
+        self.add_widget(brief_button)
+        self.add_widget(log_button)
+        self.add_widget(review_button)
     
-    def open_popup(self):
+    def open_popup(self, card_type: str):
         popup_content = GridLayout(cols=1)
         text_input = TextInput(hint_text="Enter new memo")
         save_button = Button(text="Save")
@@ -30,14 +36,14 @@ class ButtonLayout(GridLayout):
         popup_content.add_widget(save_button)
 
         popup = Popup(title="New Memo", content=popup_content, size_hint=(0.8, 0.5))
-        save_button.bind(on_release=lambda x: self.save_memo(text_input.text, popup))
+        save_button.bind(on_release=lambda x: self.save_memo(text_input.text, card_type, popup))
         popup.open()
     
-    def save_memo(self, text, popup):
+    def save_memo(self, text, card_type, popup):
         if text:
             date = datetime.datetime.now()
             date_str = date.strftime("%Y%m%d_%H%M%S")
-            self.cards_view.card_list.create(text, "type")
+            self.cards_view.card_list.create(text, card_type)
             
             self.cards_view.populate_cards()
             
@@ -60,11 +66,11 @@ class CardListView(ScrollView):
         
         cards = self.card_list.read(lambda x: True)
         for card in cards:
-            self.add_card(card.date_str, card.content)
+            self.add_card(card)
 
-    def add_card(self, key, text):
+    def add_card(self, card):
         """ Adds a new card to the scroll view. """
-        card_button = Button(text=text, size_hint_y=None, height=100)
+        card_button = Button(text=f"{card}", size_hint_y=None, height=100)
         self.card_grid.add_widget(card_button)
         
 class MainLayout(GridLayout):
