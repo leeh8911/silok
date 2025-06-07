@@ -7,6 +7,7 @@ find_package(Spdlog REQUIRED)
 
 target_include_directories(${PROJECT_LIB} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/thirdparty/sqlite3
 )
 
 target_link_libraries(${PROJECT_LIB} PUBLIC
