@@ -8,10 +8,29 @@
 
 namespace silok::logger
 {
+inline spdlog::level::level_enum stringToLevel(const std::string& level)
+{
+    if (level == "trace")
+        return spdlog::level::trace;
+    else if (level == "debug")
+        return spdlog::level::debug;
+    else if (level == "info")
+        return spdlog::level::info;
+    else if (level == "warn")
+        return spdlog::level::warn;
+    else if (level == "error")
+        return spdlog::level::err;
+    else if (level == "critical")
+        return spdlog::level::critical;
+    else
+        return spdlog::level::off;  // Default to off for unknown levels
+}
+
 class Logger
 {
  public:
-    static void init(const std::string &name = "silok")
+    static void init(const std::string& name = "silok", const std::string& level = "trace",
+                     const std::string& flush_on = "warn")
     {
         if (!spdlog::get(name))
         {
@@ -23,8 +42,8 @@ class Logger
         }
 
         logger->set_pattern("[%Y-%m-%d %H:%M:%S.%f] %^[%l]%$ [%s:%#:%!] [thread %t] %v");
-        logger->set_level(spdlog::level::trace);
-        logger->flush_on(spdlog::level::warn);
+        logger->set_level(stringToLevel(level));
+        logger->flush_on(stringToLevel(flush_on));
     }
 
     static std::shared_ptr<spdlog::logger> get()

@@ -1,18 +1,12 @@
 #pragma once
 
-#include "silok/note.hpp"
+#include "silok/db/base/base_db_connection.hpp"
 
 namespace silok::repository
 {
-class BaseRepository
+class UserRepository;
 {
  public:
-    BaseRepository() = default;
-
-    virtual ~BaseRepository() = default;
-    virtual uint64_t createNote() = 0;
-    virtual ::silok::Note getNote(uint64_t id) = 0;
-    virtual bool updateNote(const Note& note) = 0;
-    virtual bool deleteNote(uint64_t id) = 0;
+    UserRepository() = default;
 };
 }  // namespace silok::repository

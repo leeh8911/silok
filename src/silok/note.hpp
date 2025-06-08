@@ -13,6 +13,11 @@ enum class NoteType
     Event
 };
 
+using Id = uint64_t;
+
+class Tag;
+class Project;
+
 struct Note
 {
     uint64_t id{};
@@ -25,5 +30,7 @@ struct Note
     std::optional<std::chrono::system_clock::time_point> end_date{};
     std::optional<bool> done{};
 };
+
+using NoteList = std::vector<Note>;
 
 }  // namespace silok
