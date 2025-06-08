@@ -31,4 +31,6 @@ class SqliteDBConnection : public BaseDBConnection
  private:
     std::shared_ptr<sqlite3> db{nullptr};
 };
+
+using SqliteDBConnectionPtr = std::shared_ptr<SqliteDBConnection>;
 }  // namespace silok::db
