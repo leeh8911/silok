@@ -9,14 +9,14 @@
 class SqliteDBConnectionTest : public ::testing::Test
 {
  protected:
-    ::silok::db::SqliteDBConnectionPtr db{nullptr};
+    silok::db::SqliteDBConnectionPtr db{nullptr};
 
     void SetUp() override
     {
         // Migrate schema into an in-memory database
-        db = std::make_shared<::silok::db::SqliteDBConnection>(":memory:");
+        db = std::make_shared<silok::db::SqliteDBConnection>(":memory:");
 
-        ::silok::db::SqliteSchemaManager schemaManager;
+        silok::db::SqliteSchemaManager schemaManager;
         schemaManager.migrate(*db);
     }
 

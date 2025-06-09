@@ -1,11 +1,14 @@
 #include "silok/repository/user_repository.hpp"
 
+#include <stdexcept>
+
 #include "silok/db/base/base_db_connection.hpp"
+#include "silok/db/base/base_db_statement.hpp"
 
 namespace silok::repository
 {
 
-UserRepository::UserRepository(BaseDBConnectionPtr db_) : db(std::move(db_)) {}
+UserRepository::UserRepository(silok::db::BaseDBConnectionPtr db_) : db(std::move(db_)) {}
 
 void UserRepository::createUser(const std::string& username)
 {
@@ -21,6 +24,19 @@ std::optional<User> UserRepository::getUserById(uint64_t id)
 {
     auto stmt = db->prepare("SELECT id, username FROM users WHERE id = ?;");
     stmt->bind(1, id);
+    if (stmt->step())
+    {
+        User user;
+        user.id = stmt->columnInt(0);
+        user.username = stmt->columnText(1);
+        return user;
+    }
+    return std::nullopt;  // User not found
+}
+std::optional<User> UserRepository::getUserByName(const std::string& username)
+{
+    auto stmt = db->prepare("SELECT id, username FROM users WHERE username = ?;");
+    stmt->bind(1, username);
     if (stmt->step())
     {
         User user;
