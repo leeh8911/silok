@@ -32,11 +32,21 @@ void SqliteDBStatement::bindNull(int idx)
 {
     sqlite3_bind_null(this->stmt.get(), idx);
 }
-bool SqliteDBStatement::step()
+StepResult SqliteDBStatement::step()
 {
     int rc = sqlite3_step(this->stmt.get());
     SILOK_LOG_TRACE("SQLite step result: {}", rc);
-    return rc == SQLITE_ROW;
+
+    switch (rc)
+    {
+        case SQLITE_ROW:
+            return StepResult::Row;
+        case SQLITE_DONE:
+            return StepResult::Done;
+        default:
+            // 로깅 등 추가
+            return StepResult::Error;
+    }
 }
 int64_t SqliteDBStatement::columnInt(int col) const
 {

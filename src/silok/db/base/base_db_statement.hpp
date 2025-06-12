@@ -6,6 +6,13 @@
 
 namespace silok::db
 {
+enum class StepResult
+{
+    Row,
+    Done,
+    Error
+};
+
 class BaseDBStatement
 {
  public:
@@ -13,7 +20,7 @@ class BaseDBStatement
     virtual void bind(int idx, int64_t v) = 0;
     virtual void bind(int idx, const std::string& v) = 0;
     virtual void bindNull(int idx) = 0;
-    virtual bool step() = 0;
+    virtual StepResult step() = 0;
     virtual int64_t columnInt(int col) const = 0;
     virtual std::string columnText(int col) const = 0;
 };

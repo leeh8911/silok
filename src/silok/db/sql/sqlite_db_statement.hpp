@@ -17,7 +17,7 @@ class SqliteDBStatement : public BaseDBStatement
     void bind(int idx, int64_t v) override;
     void bind(int idx, const std::string& v) override;
     void bindNull(int idx) override;
-    bool step() override;
+    StepResult step() override;
     int64_t columnInt(int col) const override;
     std::string columnText(int col) const override;
 

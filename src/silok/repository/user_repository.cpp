@@ -4,6 +4,7 @@
 
 #include "silok/db/base/base_db_connection.hpp"
 #include "silok/db/base/base_db_statement.hpp"
+#include "silok/logger.hpp"
 
 namespace silok::repository
 {
@@ -12,9 +13,10 @@ UserRepository::UserRepository(silok::db::BaseDBConnectionPtr db_) : db(std::mov
 
 void UserRepository::createUser(const std::string& username)
 {
+    SILOK_LOG_DEBUG("Creating user with username: {}", username);
     auto stmt = db->prepare("INSERT INTO users(username) VALUES(?);");
     stmt->bind(1, username);
-    if (!stmt->step())
+    if (stmt->step() != silok::db::StepResult::Done)
     {
         throw std::runtime_error("Failed to create user: " + username);
     }
@@ -24,7 +26,7 @@ std::optional<User> UserRepository::getUserById(uint64_t id)
 {
     auto stmt = db->prepare("SELECT id, username FROM users WHERE id = ?;");
     stmt->bind(1, id);
-    if (stmt->step())
+    if (stmt->step() == silok::db::StepResult::Row)
     {
         User user;
         user.id = stmt->columnInt(0);
@@ -35,9 +37,10 @@ std::optional<User> UserRepository::getUserById(uint64_t id)
 }
 std::optional<User> UserRepository::getUserByName(const std::string& username)
 {
+    SILOK_LOG_DEBUG("Searching for user with username: {}", username);
     auto stmt = db->prepare("SELECT id, username FROM users WHERE username = ?;");
     stmt->bind(1, username);
-    if (stmt->step())
+    if (stmt->step() == silok::db::StepResult::Row)
     {
         User user;
         user.id = stmt->columnInt(0);
@@ -51,7 +54,7 @@ void UserRepository::deleteUser(uint64_t id)
 {
     auto stmt = db->prepare("DELETE FROM users WHERE id = ?;");
     stmt->bind(1, id);
-    if (!stmt->step())
+    if (stmt->step() != silok::db::StepResult::Done)
     {
         throw std::runtime_error("Failed to delete user with ID: " + std::to_string(id));
     }

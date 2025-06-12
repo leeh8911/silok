@@ -45,20 +45,23 @@ TEST_F(SqliteDBConnectionTest, PrepareBindStepColumn)
     // INSERT using prepared statement
     auto insertStmt = db->prepare("INSERT INTO users(username) VALUES(?);");
     insertStmt->bind(1, std::string("charlie"));
-    // INSERT returns SQLITE\_DONE => step() should return false
-    EXPECT_FALSE(insertStmt->step());
+    // Expect Done
+    EXPECT_EQ(insertStmt->step(), silok::db::StepResult::Done);
+
     int64_t newUserId = db->lastInsertId();
     EXPECT_GT(newUserId, 0);
 
     // SELECT using prepared statement
     auto selectStmt = db->prepare("SELECT username FROM users WHERE id = ?;");
     selectStmt->bind(1, newUserId);
-    // First row should be available
-    ASSERT_TRUE(selectStmt->step());
+
+    // Expect Row
+    ASSERT_EQ(selectStmt->step(), silok::db::StepResult::Row);
     std::string username = selectStmt->columnText(0);
     EXPECT_EQ(username, "charlie");
-    // No more rows
-    EXPECT_FALSE(selectStmt->step());
+
+    // No more rows → should be Done
+    EXPECT_EQ(selectStmt->step(), silok::db::StepResult::Done);
 }
 
 // Test that schema manager created all tables and relationships
@@ -88,9 +91,9 @@ TEST_F(SqliteDBConnectionTest, SchemaCreatesAndRelatesTables)
     // Verify note_project relationship
     auto npStmt = db->prepare("SELECT project_id FROM note_project WHERE note_id = ?;");
     npStmt->bind(1, noteId);
-    ASSERT_TRUE(npStmt->step());
+    ASSERT_EQ(npStmt->step(), silok::db::StepResult::Row);
     EXPECT_EQ(npStmt->columnInt(0), projId);
-    EXPECT_FALSE(npStmt->step());
+    EXPECT_EQ(npStmt->step(), silok::db::StepResult::Done);
 
     // Link note to tag
     std::ostringstream ntSql;
@@ -100,7 +103,7 @@ TEST_F(SqliteDBConnectionTest, SchemaCreatesAndRelatesTables)
     // Verify note_tag relationship
     auto ntStmt = db->prepare("SELECT tag_id FROM note_tag WHERE note_id = ?;");
     ntStmt->bind(1, noteId);
-    ASSERT_TRUE(ntStmt->step());
+    ASSERT_EQ(ntStmt->step(), silok::db::StepResult::Row);
     EXPECT_EQ(ntStmt->columnInt(0), tagId);
-    EXPECT_FALSE(ntStmt->step());
+    EXPECT_EQ(ntStmt->step(), silok::db::StepResult::Done);
 }

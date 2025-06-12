@@ -13,7 +13,7 @@ void TagRepository::createTag(const std::string& name, uint64_t owner_id)
 {
     auto stmt = db->prepare("INSERT INTO tags(name) VALUES(?);");
     stmt->bind(1, name);
-    if (!stmt->step())
+    if (stmt->step() != silok::db::StepResult::Done)
     {
         throw std::runtime_error("Failed to create tag: " + name);
     }
@@ -33,7 +33,7 @@ std::optional<std::vector<Tag>> TagRepository::getTagsByOwner(uint64_t owner_id)
     stmt->bind(1, owner_id);
 
     std::vector<Tag> tags;
-    while (stmt->step())
+    while (stmt->step() == silok::db::StepResult::Row)
     {
         Tag tag;
         tag.id = stmt->columnInt(0);
@@ -52,7 +52,7 @@ std::optional<Tag> TagRepository::getTagById(uint64_t id, uint64_t owner_id)
 {
     auto stmt = db->prepare("SELECT id, name FROM tags WHERE id = ?;");
     stmt->bind(1, id);
-    if (stmt->step())
+    if (stmt->step() == silok::db::StepResult::Row)
     {
         Tag tag;
         tag.id = stmt->columnInt(0);
@@ -74,7 +74,7 @@ void TagRepository::deleteTag(uint64_t id, uint64_t owner_id)
     // Delete the tag
     auto stmt = db->prepare("DELETE FROM tags WHERE id = ?;");
     stmt->bind(1, id);
-    if (!stmt->step())
+    if (stmt->step() != silok::db::StepResult::Done)
     {
         throw std::runtime_error("Failed to delete tag with ID: " + std::to_string(id));
     }
@@ -93,7 +93,7 @@ void TagRepository::shareTag(uint64_t tag_id, uint64_t owner_id, uint64_t shared
     auto stmt = db->prepare("INSERT INTO user_tag(user_id, tag_id, role) VALUES(?, ?, 'shared');");
     stmt->bind(1, shared_user_id);
     stmt->bind(2, tag_id);
-    if (!stmt->step())
+    if (stmt->step() != silok::db::StepResult::Done)
     {
         throw std::runtime_error("Failed to share tag with user ID: " +
                                  std::to_string(shared_user_id));

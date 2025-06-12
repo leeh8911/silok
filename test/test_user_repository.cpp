@@ -8,7 +8,7 @@
 class UserRepositoryTest : public ::testing::Test
 {
  protected:
-    silok::repository::UserRepository user_repo;
+    std::shared_ptr<silok::repository::UserRepository> user_repo{nullptr};
     silok::db::SqliteDBConnectionPtr db{nullptr};
 
     void SetUp() override
@@ -19,7 +19,7 @@ class UserRepositoryTest : public ::testing::Test
         silok::db::SqliteSchemaManager schemaManager;
         schemaManager.migrate(*db);
 
-        user_repo = silok::repository::UserRepository(db);
+        user_repo = std::make_shared<silok::repository::UserRepository>(db);
     }
 
     void TearDown() override
@@ -31,32 +31,32 @@ class UserRepositoryTest : public ::testing::Test
 TEST_F(UserRepositoryTest, BasicUserCRUDScenario)
 {
     // Test creating a user
-    user_repo.createUser("testuser");
+    user_repo->createUser("testuser");
 
-    auto user = user_repo.getUserByName("testuser").value();
+    auto user = user_repo->getUserByName("testuser").value();
     EXPECT_GT(user.id, 0);
     EXPECT_EQ(user.username, "testuser");
 
     // Verify user exists in the database
-    auto found = user_repo.getUserById(user.id).value();
+    auto found = user_repo->getUserById(user.id).value();
     EXPECT_EQ(found.id, user.id);
     EXPECT_EQ(found.username, "testuser");
 
     // Verify user is deleted
-    user_repo.deleteUser(user.id);
-    EXPECT_FALSE(user_repo.getUserById(user.id).has_value());
+    user_repo->deleteUser(user.id);
+    EXPECT_FALSE(user_repo->getUserById(user.id).has_value());
 }
 
 TEST_F(UserRepositoryTest, DuplicatedUserCreation)
 {
     // Create a user
-    user_repo.createUser("duplicateuser");
-    auto user1 = user_repo.getUserByName("duplicateuser").value();
+    user_repo->createUser("duplicateuser");
+    auto user1 = user_repo->getUserByName("duplicateuser").value();
 
     // Attempt to create the same user again
     try
     {
-        user_repo.createUser("duplicateuser");
+        user_repo->createUser("duplicateuser");
         FAIL() << "Expected an exception for duplicate username";
     }
     catch (const std::runtime_error& e)

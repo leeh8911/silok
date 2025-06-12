@@ -10,8 +10,9 @@ class TagRepositoryTest : public ::testing::Test
 {
  protected:
     silok::db::SqliteDBConnectionPtr db{nullptr};
-    silok::repository::TagRepository tag_repo;
-    silok::repository::UserRepository user_repo;
+
+    std::shared_ptr<silok::repository::TagRepository> tag_repo{nullptr};
+    std::shared_ptr<silok::repository::UserRepository> user_repo{nullptr};
 
     void SetUp() override
     {
@@ -21,7 +22,8 @@ class TagRepositoryTest : public ::testing::Test
         silok::db::SqliteSchemaManager schemaManager;
         schemaManager.migrate(*db);
 
-        tag_repo = silok::repository::TagRepository(db);
+        tag_repo = std::make_shared<silok::repository::TagRepository>(db);
+        user_repo = std::make_shared<silok::repository::UserRepository>(db);
     }
 
     void TearDown() override
@@ -32,52 +34,52 @@ class TagRepositoryTest : public ::testing::Test
 
 TEST_F(TagRepositoryTest, BasicTagCRUDScenario)
 {
-    user_repo.createUser("testuser");
-    auto user = user_repo.getUserByName("testuser").value();
+    user_repo->createUser("testuser");
+    auto user = user_repo->getUserByName("testuser").value();
 
-    tag_repo.createTag("testtag", user.id);
-    auto tags = tag_repo.getTagsByOwner(user.id).value();
+    tag_repo->createTag("testtag", user.id);
+    auto tags = tag_repo->getTagsByOwner(user.id).value();
     EXPECT_EQ(tags.size(), 1);
 
     auto tag = tags[0];
     EXPECT_GT(tag.id, 0);
     EXPECT_EQ(tag.name, "testtag");
 
-    auto found = tag_repo.getTagById(tag.id, user.id).value();
+    auto found = tag_repo->getTagById(tag.id, user.id).value();
     EXPECT_EQ(found.id, tag.id);
     EXPECT_EQ(found.name, "testtag");
 
-    tag_repo.deleteTag(tag.id, user.id);
-    EXPECT_FALSE(tag_repo.getTagById(tag.id, user.id).has_value());
+    tag_repo->deleteTag(tag.id, user.id);
+    EXPECT_FALSE(tag_repo->getTagById(tag.id, user.id).has_value());
 }
 
 TEST_F(TagRepositoryTest, WrongOwnershipScenario)
 {
-    user_repo.createUser("owner");
-    user_repo.createUser("shared_user");
-    auto owner = user_repo.getUserByName("owner").value();
-    auto shared_user = user_repo.getUserByName("shared_user").value();
+    user_repo->createUser("owner");
+    user_repo->createUser("shared_user");
+    auto owner = user_repo->getUserByName("owner").value();
+    auto shared_user = user_repo->getUserByName("shared_user").value();
 
-    tag_repo.createTag("shared_tag", owner.id);
-    auto tags = tag_repo.getTagsByOwner(owner.id).value();
+    tag_repo->createTag("shared_tag", owner.id);
+    auto tags = tag_repo->getTagsByOwner(owner.id).value();
     EXPECT_EQ(tags.size(), 1);
 
     auto tag = tags[0];
 
-    auto owner_found = tag_repo.getTagById(tag.id, owner.id).value();
+    auto owner_found = tag_repo->getTagById(tag.id, owner.id).value();
     EXPECT_EQ(owner_found.id, tag.id);
     EXPECT_EQ(owner_found.name, "shared_tag");
 
-    EXPECT_FALSE(tag_repo.getTagById(tag.id, shared_user.id)
+    EXPECT_FALSE(tag_repo->getTagById(tag.id, shared_user.id)
                      .has_value());  // Should not be found since shared_user has no access
 
-    tag_repo.shareTag(tag.id, owner.id, shared_user.id);
-    auto shared_found = tag_repo.getTagById(tag.id, shared_user.id).value();
+    tag_repo->shareTag(tag.id, owner.id, shared_user.id);
+    auto shared_found = tag_repo->getTagById(tag.id, shared_user.id).value();
     EXPECT_EQ(shared_found.id, tag.id);
 
     try
     {
-        tag_repo.deleteTag(tag.id, shared_user.id);
+        tag_repo->deleteTag(tag.id, shared_user.id);
         FAIL() << "Expected an exception when shared user tries to delete tag";
     }
     catch (const std::runtime_error& e)
