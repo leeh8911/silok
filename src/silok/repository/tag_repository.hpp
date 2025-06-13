@@ -25,6 +25,9 @@ class TagRepository
 
     void shareTag(uint64_t tag_id, uint64_t owner_id, uint64_t shared_user_id);
 
+    bool isTagOwned(uint64_t tag_id, uint64_t user_id) const;
+    bool isTagShared(uint64_t tag_id, uint64_t user_id) const;
+
  private:
     silok::db::BaseDBConnectionPtr db{nullptr};
 };

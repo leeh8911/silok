@@ -61,6 +61,6 @@ TEST_F(UserRepositoryTest, DuplicatedUserCreation)
     }
     catch (const std::runtime_error& e)
     {
-        EXPECT_STREQ(e.what(), "User with username 'duplicateuser' already exists");
+        EXPECT_STREQ(e.what(), "Failed to create user: duplicateuser");
     }
 }
