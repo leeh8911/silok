@@ -38,7 +38,7 @@ TEST_F(TagRepositoryTest, BasicTagCRUDScenario)
     auto user = user_repo->getUserByName("testuser").value();
 
     tag_repo->createTag("testtag", user.id);
-    auto tags = tag_repo->getTagsByOwner(user.id).value();
+    auto tags = tag_repo->getTagsByOwner(user.id);
     EXPECT_EQ(tags.size(), 1);
 
     auto tag = tags[0];
@@ -61,7 +61,7 @@ TEST_F(TagRepositoryTest, WrongOwnershipScenario)
     auto shared_user = user_repo->getUserByName("shared_user").value();
 
     tag_repo->createTag("shared_tag", owner.id);
-    auto tags = tag_repo->getTagsByOwner(owner.id).value();
+    auto tags = tag_repo->getTagsByOwner(owner.id);
     EXPECT_EQ(tags.size(), 1);
 
     auto tag = tags[0];

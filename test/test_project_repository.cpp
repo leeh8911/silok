@@ -38,7 +38,7 @@ TEST_F(ProjectRepositoryTest, BasicTagCRUDScenario)
 
     project_repo->createProject("testproject", user.id);
 
-    auto projects = project_repo->getProjectsByOwner(user.id).value();
+    auto projects = project_repo->getProjectsByOwner(user.id);
     EXPECT_EQ(projects.size(), 1);
 
     auto project = projects[0];
@@ -54,7 +54,7 @@ TEST_F(ProjectRepositoryTest, BasicTagCRUDScenario)
         auto deleted = project_repo->getProjectById(project.id, user.id);
         EXPECT_FALSE(deleted.has_value());
 
-        auto projects = project_repo->getProjectsByOwner(user.id).value();
+        auto projects = project_repo->getProjectsByOwner(user.id);
         EXPECT_TRUE(projects.empty());  // Should be empty after deletion
     }
 }
@@ -67,7 +67,7 @@ TEST_F(ProjectRepositoryTest, WrongOwnershipScenario)
     auto shared_user = user_repo->getUserByName("shared_user").value();
 
     project_repo->createProject("shared_project", owner.id);
-    auto projects = project_repo->getProjectsByOwner(owner.id).value();
+    auto projects = project_repo->getProjectsByOwner(owner.id);
     auto project = projects[0];
 
     auto owner_found = project_repo->getProjectById(project.id, owner.id).value();

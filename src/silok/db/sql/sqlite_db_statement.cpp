@@ -44,7 +44,9 @@ StepResult SqliteDBStatement::step()
         case SQLITE_DONE:
             return StepResult::Done;
         default:
-            // 로깅 등 추가
+            SILOK_LOG_ERROR("SQLite error: {}",
+                            sqlite3_errmsg(sqlite3_db_handle(this->stmt.get())));
+
             return StepResult::Error;
     }
 }

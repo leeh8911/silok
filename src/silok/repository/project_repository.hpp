@@ -17,13 +17,16 @@ class ProjectRepository
 
     void createProject(const std::string& name, uint64_t owner_id);
 
-    std::optional<std::vector<Project>> getProjectsByOwner(uint64_t owner_id);
+    std::vector<Project> getProjectsByOwner(uint64_t owner_id);
 
     std::optional<Project> getProjectById(uint64_t id, uint64_t owner_id);
 
     void deleteProject(uint64_t id, uint64_t owner_id);
 
     void shareProject(uint64_t project_id, uint64_t owner_id, uint64_t shared_user_id);
+
+    bool isProjectShared(uint64_t project_id, uint64_t user_id) const;
+    bool isProjectOwned(uint64_t project_id, uint64_t user_id) const;
 
  private:
     silok::db::BaseDBConnectionPtr db{nullptr};

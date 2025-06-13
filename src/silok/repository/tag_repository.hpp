@@ -17,7 +17,7 @@ class TagRepository
 
     void createTag(const std::string& name, uint64_t owner_id);
 
-    std::optional<std::vector<Tag>> getTagsByOwner(uint64_t owner_id);
+    std::vector<Tag> getTagsByOwner(uint64_t owner_id);
 
     std::optional<Tag> getTagById(uint64_t id, uint64_t owner_id);
 
