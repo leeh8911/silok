@@ -17,7 +17,7 @@ class SqliteDBConnectionTest : public ::testing::Test
         db = std::make_shared<silok::db::SqliteDBConnection>(":memory:");
 
         silok::db::SqliteSchemaManager schemaManager;
-        schemaManager.migrate(*db);
+        schemaManager.migrate(db);
     }
 
     void TearDown() override

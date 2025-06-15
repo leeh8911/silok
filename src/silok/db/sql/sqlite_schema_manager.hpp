@@ -7,10 +7,10 @@ namespace silok::db
 class SqliteSchemaManager : public BaseSchemaManager
 {
  public:
-    void migrate(BaseDBConnection &db) override
+    void migrate(BaseDBConnectionPtr db) override
     {
         // users, projects, tags, notes
-        db.exec(R"(
+        db->exec(R"(
       CREATE TABLE IF NOT EXISTS users (
         id       INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT    NOT NULL UNIQUE
@@ -32,7 +32,7 @@ class SqliteSchemaManager : public BaseSchemaManager
     )");
 
         // user_project, user_tag, user_note
-        db.exec(R"(
+        db->exec(R"(
       CREATE TABLE IF NOT EXISTS user_project (
         user_id    INTEGER NOT NULL REFERENCES users(id)    ON DELETE CASCADE,
         project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
@@ -54,7 +54,7 @@ class SqliteSchemaManager : public BaseSchemaManager
     )");
 
         // note_project, note_tag
-        db.exec(R"(
+        db->exec(R"(
       CREATE TABLE IF NOT EXISTS note_project (
         note_id    INTEGER NOT NULL REFERENCES notes(id)    ON DELETE CASCADE,
         project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,

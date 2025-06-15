@@ -8,7 +8,7 @@ class BaseSchemaManager
 {
  public:
     virtual ~BaseSchemaManager() = default;
-    virtual void migrate(BaseDBConnection& db) = 0;
+    virtual void migrate(BaseDBConnectionPtr db) = 0;
 };
 
 }
