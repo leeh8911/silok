@@ -1,3 +1,15 @@
 [submodule "thirdparty/crow"]
 	path = thirdparty/crow
 	url = https://github.com/CrowCpp/Crow.git
+[submodule "thirdparty/sqlite_orm"]
+	path = thirdparty/sqlite_orm
+	url = https://github.com/fnc12/sqlite_orm.git
+[submodule "thirdparty/jwt-cpp"]
+	path = thirdparty/jwt-cpp
+	url = https://github.com/Thalhammer/jwt-cpp.git
+[submodule "thirdparty/bcrypt"]
+	path = thirdparty/bcrypt
+	url = https://github.com/hilch/Bcrypt.cpp.git
+[submodule "thirdparty/nlohmann-json"]
+	path = thirdparty/nlohmann-json
+	url = https://github.com/nlohmann/json.git

@@ -1,0 +1,20 @@
+# 입력 파일들 지정
+INPUT = ./src
+
+# 클래스 다이어그램 생성
+HAVE_DOT = YES
+CLASS_DIAGRAMS = YES
+
+# 더 많은 시각화 옵션 (선택)
+CALL_GRAPH = YES
+CALLER_GRAPH = YES
+COLLABORATION_GRAPH = YES
+INCLUDE_GRAPH = YES
+INCLUDED_BY_GRAPH = YES
+
+# 이미지 출력 경로 (옵션)
+DOT_IMAGE_FORMAT = svg
+DOT_GRAPH_MAX_NODES = 50
+
+# HTML 문서 안에 그래프 포함
+GENERATE_TREEVIEW = YES
