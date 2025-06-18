@@ -16,6 +16,8 @@ class UserService
 
     std::optional<domain::User> FindByEmail(const std::string& email);
 
+    std::optional<std::string> Login(const std::string& email, const std::string& password);
+
  private:
     UserService() = default;
 };

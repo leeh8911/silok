@@ -70,10 +70,13 @@ RUN git clone https://github.com/CrowCpp/Crow.git /opt/crow \
 # ========================
 # bcrypt 설치
 # ========================
-RUN git clone https://github.com/rg3/bcrypt.git /opt/rg3-bcrypt \
-    && cp /opt/rg3-bcrypt/bcrypt.h /usr/local/include/ \
-    && gcc -c /opt/rg3-bcrypt/bcrypt.c -o /opt/rg3-bcrypt/bcrypt.o \
-    && ar rcs /usr/local/lib/libbcrypt.a /opt/rg3-bcrypt/bcrypt.o
+RUN apt-get update && apt-get install -y cmake git \
+    && git clone https://github.com/trusch/libbcrypt.git /opt/libbcrypt \
+    && mkdir -p /opt/libbcrypt/build \
+    && cd /opt/libbcrypt/build \
+    && cmake .. \
+    && make \
+    && make install
 
 
 

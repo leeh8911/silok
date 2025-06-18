@@ -30,5 +30,11 @@ TEST_F(TestUserService, UserService_CreateAndFindUser)
     ASSERT_TRUE(user.has_value());
     ASSERT_EQ(user->name, "john.doe");
     ASSERT_EQ(user->email, "john.doe@test.com");
-    ASSERT_EQ(user->password, "password");
+    ASSERT_NE(user->password, "password");
+
+    ASSERT_EQ(service.Login("john.doe@test.com", "wrong_password"), std::nullopt);
+    ASSERT_EQ(service.Login("wrong_email@test.com", "password"), std::nullopt);
+
+    auto token = service.Login("john.doe@test.com", "password");
+    ASSERT_TRUE(token.has_value());
 }
