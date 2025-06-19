@@ -8,6 +8,7 @@
 #include <sqlite_orm/sqlite_orm.h>
 
 #include "silok/domain/note.hpp"
+#include "silok/domain/note_user.hpp"
 #include "silok/domain/user.hpp"
 
 namespace silok::infra
@@ -26,7 +27,10 @@ inline auto makeStorage(const std::string& path)
         make_table("note", make_column("id", &Note::id, primary_key()),
                    make_column("content", &Note::content),
                    make_column("created_at", &Note::created_at),
-                   make_column("updated_at", &Note::updated_at)));
+                   make_column("updated_at", &Note::updated_at)),
+        make_table("user_note", make_column("id", &NoteUser::id, primary_key()),
+                   make_column("user_id", &NoteUser::user_id),
+                   make_column("note_id", &NoteUser::note_id)));
 }
 
 using Storage = decltype(makeStorage(""));
@@ -54,6 +58,19 @@ class StorageManager
         }
         instance_->storage_->insert(data);
     }
+    template <typename T>
+    static T Last()
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (!instance_)
+        {
+            throw std::runtime_error("StorageManager not initialized");
+        }
+        auto id = instance_->storage_->last_insert_rowid();
+        auto obj = instance_->storage_->get<T>(id);
+
+        return obj;
+    }
 
     template <typename T>
     static std::vector<T> SelectAll()
@@ -67,7 +84,7 @@ class StorageManager
     }
 
     template <typename T>
-    static bool Update(const T& data)
+    static void Update(const T& data)
     {
         std::lock_guard<std::mutex> lock(mutex_);
         if (!instance_)
@@ -78,14 +95,14 @@ class StorageManager
     }
 
     template <typename T>
-    static bool Remove(const T& data)
+    static void Remove(const T& data)
     {
         std::lock_guard<std::mutex> lock(mutex_);
         if (!instance_)
         {
             throw std::runtime_error("StorageManager not initialized");
         }
-        return instance_->storage_->remove(data);
+        return instance_->storage_->remove<T>(data.id);
     }
 
     template <typename T, typename FieldType>

@@ -18,6 +18,10 @@ class UserService
 
     std::optional<std::string> Login(const std::string& email, const std::string& password);
 
+    void Update(const domain::User& user);
+
+    void Delete(const domain::User& user);
+
  private:
     UserService() = default;
 };

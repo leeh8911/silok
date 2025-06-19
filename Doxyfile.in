@@ -1,5 +1,6 @@
 # 입력 파일들 지정
 INPUT = ./src
+OUTPUT_DIRECTORY = @DOXYGEN_OUTPUT_DIR@
 
 # 클래스 다이어그램 생성
 HAVE_DOT = YES

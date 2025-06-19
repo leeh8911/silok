@@ -47,6 +47,7 @@ find_package(OpenSSL REQUIRED)
 find_package(Doxygen REQUIRED dot)
 
 if(DOXYGEN_FOUND)
+    message(STATUS "Generate Doxygen documentation")
     set(DOXYGEN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/docs/doxygen")
     set(DOXYGEN_INDEX_FILE "${DOXYGEN_OUTPUT_DIR}/index.html")
 

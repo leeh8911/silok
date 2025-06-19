@@ -51,4 +51,43 @@ std::optional<std::string> UserService::Login(const std::string& email, const st
     return std::nullopt;
 }
 
+void UserService::Update(const domain::User& user)
+{
+    if (user.id <= 0)
+    {
+        SILOK_LOG_ERROR("Invalid user ID for update: {}", user.id);
+        return;
+    }
+
+    auto existing_user =
+        infra::StorageManager::FindByField<domain::User>(&domain::User::id, user.id);
+    if (existing_user.empty())
+    {
+        SILOK_LOG_ERROR("User not found for update: {}", user.id);
+        return;
+    }
+
+    infra::StorageManager::Update(user);
+    SILOK_LOG_DEBUG("User updated: {}", user.name);
+}
+
+void UserService::Delete(const domain::User& user)
+{
+    if (user.id <= 0)
+    {
+        SILOK_LOG_ERROR("Invalid user ID for deletion: {}", user.id);
+        return;
+    }
+
+    auto existing_user =
+        infra::StorageManager::FindByField<domain::User>(&domain::User::id, user.id);
+    if (existing_user.empty())
+    {
+        SILOK_LOG_ERROR("User not found for deletion: {}", user.id);
+        return;
+    }
+
+    infra::StorageManager::Remove(user);
+    SILOK_LOG_DEBUG("User deleted: {}", user.name);
+}
 }  // namespace silok::application
