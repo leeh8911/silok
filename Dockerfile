@@ -71,8 +71,7 @@ RUN git clone https://github.com/CrowCpp/Crow.git /opt/crow \
 # ========================
 # bcrypt 설치
 # ========================
-RUN apt-get update && apt-get install -y cmake git \
-    && git clone https://github.com/trusch/libbcrypt.git /opt/libbcrypt \
+RUN git clone https://github.com/trusch/libbcrypt.git /opt/libbcrypt \
     && mkdir -p /opt/libbcrypt/build \
     && cd /opt/libbcrypt/build \
     && cmake .. \
