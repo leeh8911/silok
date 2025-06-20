@@ -7,9 +7,8 @@
 
 #include <sqlite_orm/sqlite_orm.h>
 
-#include "silok/domain/note.hpp"
-#include "silok/domain/note_user.hpp"
-#include "silok/domain/user.hpp"
+#include "silok/domain/data.hpp"
+#include "silok/domain/data_relation.hpp"
 
 namespace silok::infra
 {
@@ -28,9 +27,17 @@ inline auto makeStorage(const std::string& path)
                    make_column("content", &Note::content),
                    make_column("created_at", &Note::created_at),
                    make_column("updated_at", &Note::updated_at)),
-        make_table("user_note", make_column("id", &NoteUser::id, primary_key()),
-                   make_column("user_id", &NoteUser::user_id),
-                   make_column("note_id", &NoteUser::note_id)));
+        make_table("tag", make_column("id", &Tag::id, primary_key()),
+                   make_column("name", &Tag::name)),
+        make_table("user_note", make_column("id", &UserNote::id, primary_key()),
+                   make_column("user_id", &UserNote::user_id),
+                   make_column("note_id", &UserNote::note_id)),
+        make_table("user_tag", make_column("id", &UserTag::id, primary_key()),
+                   make_column("user_id", &UserTag::user_id),
+                   make_column("tag_id", &UserTag::tag_id)),
+        make_table("note_tag", make_column("id", &NoteTag::id, primary_key()),
+                   make_column("note_id", &NoteTag::note_id),
+                   make_column("tag_id", &NoteTag::tag_id)));
 }
 
 using Storage = decltype(makeStorage(""));

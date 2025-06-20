@@ -3,7 +3,8 @@
 #include <optional>
 #include <string>
 
-#include "silok/domain/user.hpp"
+#include "silok/domain/data.hpp"
+#include "silok/domain/data_relation.hpp"
 
 namespace silok::application
 {

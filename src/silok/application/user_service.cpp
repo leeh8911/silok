@@ -4,7 +4,8 @@
 #include <string>
 
 #include "silok/domain/crypt.hpp"
-#include "silok/domain/user.hpp"
+#include "silok/domain/data.hpp"
+#include "silok/domain/data_relation.hpp"
 #include "silok/domain/user_token.hpp"
 #include "silok/infra/storage_manager.hpp"
 #include "silok/logger.hpp"

@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
 #include "silok/application/user_service.hpp"
+#include "silok/domain/data.hpp"
+#include "silok/domain/data_relation.hpp"
 #include "silok/infra/storage_manager.hpp"
 
 class TestUserService : public ::testing::Test

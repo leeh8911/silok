@@ -4,8 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "silok/domain/note.hpp"
-#include "silok/domain/user_token.hpp"
+#include "silok/domain/data.hpp"
+#include "silok/domain/data_relation.hpp"
+
 #include "silok/infra/storage_manager.hpp"
 
 namespace silok::application
