@@ -25,10 +25,10 @@ void TagService::Create(const std::string& name, std::string user_token,
     domain::Tag tag;
     tag.name = name;
 
-    infra::StorageManager::Insert(tag);
+    auto tag_id = infra::StorageManager::Insert(tag);
 
     domain::UserTag tag_user;
-    tag_user.tag_id = infra::StorageManager::Last<domain::Tag>().id;
+    tag_user.tag_id = tag_id;
     tag_user.user_id = user_id.value();
 
     infra::StorageManager::Insert(tag_user);
@@ -37,9 +37,20 @@ void TagService::Create(const std::string& name, std::string user_token,
     {
         domain::NoteTag note_tag;
         note_tag.note_id = note->id;
-        note_tag.tag_id = tag_user.tag_id;
+        note_tag.tag_id = tag_id;
 
-        infra::StorageManager::Insert(note_tag);
+        auto found = infra::StorageManager::FindByFields<domain::NoteTag>(
+            &domain::NoteTag::note_id, note_tag.note_id, &domain::NoteTag::tag_id, tag_id);
+
+        if (found.empty())
+        {
+            infra::StorageManager::Insert(note_tag);
+        }
+        else
+        {
+            // 이미 해당 노트와 태그의 관계가 존재하는 경우, 아무 작업도 하지 않음
+            // 이 부분은 필요에 따라 로깅하거나 예외를 던질 수 있음
+        }
     }
 }
 
@@ -62,14 +73,7 @@ std::vector<domain::Tag> TagService::FindAll(std::string user_token)
 
     std::transform(user_tag.begin(), user_tag.end(), std::back_inserter(tag_ids), lambda);
 
-    std::vector<domain::Tag> tags;
-    for (const auto& tag_id : tag_ids)
-    {
-        auto tags_for_user = infra::StorageManager::FindByField(&domain::Tag::id, tag_id);
-        tags.insert(tags.end(), tags_for_user.begin(), tags_for_user.end());
-    }
-
-    return tags;
+    return infra::StorageManager::FindByFieldIn(&domain::Tag::id, tag_ids);
 }
 
 void TagService::Update(const domain::Tag& tag, const std::optional<domain::Note>& note)
@@ -88,6 +92,35 @@ void TagService::Update(const domain::Tag& tag, const std::optional<domain::Note
         note_tag.tag_id = tag.id;
 
         infra::StorageManager::Insert(note_tag);
+
+        auto found = infra::StorageManager::FindByFields<domain::NoteTag>(
+            &domain::NoteTag::note_id, note_tag.note_id, &domain::NoteTag::tag_id, tag.id);
+
+        if (found.empty())
+        {
+            infra::StorageManager::Insert(note_tag);
+        }
+        else
+        {
+            // 이미 해당 노트와 태그의 관계가 존재하는 경우, 아무 작업도 하지 않음
+            // 이 부분은 필요에 따라 로깅하거나 예외를 던질 수 있음
+        }
+    }
+}
+
+void TagService::Detach(const domain::Tag& tag, const domain::Note& note)
+{
+    if (tag.id <= 0 || note.id <= 0)
+    {
+        throw std::runtime_error("Invalid tag or note ID for detachment");
+    }
+
+    auto note_tag = infra::StorageManager::FindByFields<domain::NoteTag>(
+        &domain::NoteTag::note_id, note.id, &domain::NoteTag::tag_id, tag.id);
+
+    if (!note_tag.empty())
+    {
+        infra::StorageManager::Remove(note_tag.front());
     }
 }
 

@@ -26,10 +26,10 @@ void NoteService::Create(const std::string& content, std::string user_token)
     note.created_at = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     note.updated_at = note.created_at;  // 초기 생성 시점과 업데이트 시점은 동일
 
-    infra::StorageManager::Insert(note);
+    auto note_id = infra::StorageManager::Insert(note);
 
     domain::UserNote note_user;
-    note_user.note_id = infra::StorageManager::Last<domain::Note>().id;
+    note_user.note_id = note_id;
     note_user.user_id = user_id.value();
 
     infra::StorageManager::Insert(note_user);

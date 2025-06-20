@@ -21,6 +21,7 @@ class TagService
     std::vector<domain::Tag> FindAll(std::string user_token);
 
     void Update(const domain::Tag& tag, const std::optional<domain::Note>& = std::nullopt);
+    void Detach(const domain::Tag& tag, const domain::Note& note);
 
     void Delete(int64_t tag_id, std::string user_token);
 
