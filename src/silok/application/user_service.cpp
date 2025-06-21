@@ -4,25 +4,31 @@
 #include <string>
 
 #include "silok/domain/crypt.hpp"
-#include "silok/domain/data.hpp"
-#include "silok/domain/data_relation.hpp"
+#include "silok/domain/model.hpp"
+#include "silok/domain/model_relation.hpp"
+#include "silok/domain/repository/base_user_repository.hpp"
 #include "silok/domain/user_token.hpp"
 #include "silok/infra/storage_manager.hpp"
 #include "silok/logger.hpp"
 
 namespace silok::application
 {
-UserService& UserService::Get()
+
+UserService::UserService(silok::domain::repository::UserRepositoryPtr user_repository_)
+    : user_repository(std::move(user_repository_))
 {
-    static UserService instance;
-    return instance;
+    if (!user_repository)
+    {
+        SILOK_LOG_ERROR("UserRepository is not initialized");
+        throw std::runtime_error("UserRepository is not initialized");
+    }
 }
 
 void UserService::Create(const std::string& name, const std::string& email,
                          const std::string& password)
 {
-    auto found = infra::StorageManager::FindByField<domain::User>(&domain::User::email, email);
-    if (!found.empty())
+    auto found = this->user_repository->FindByEmail(email);
+    if (found.has_value())
     {
         SILOK_LOG_ERROR("User with email {} already exists", email);
         throw std::runtime_error("User with this email already exists");
@@ -33,24 +39,12 @@ void UserService::Create(const std::string& name, const std::string& email,
     user.email = email;
     user.password = domain::HashPassword(password);
 
-    infra::StorageManager::Insert(user);
-}
-
-std::optional<domain::User> UserService::FindByEmail(const std::string& email)
-{
-    auto result = infra::StorageManager::FindByField(&domain::User::email, email);
-
-    if (!result.empty())
-    {
-        return result.front();
-    }
-
-    return std::nullopt;
+    this->user_repository->Create(user);
 }
 
 std::optional<std::string> UserService::Login(const std::string& email, const std::string& password)
 {
-    auto user = FindByEmail(email);
+    auto user = this->user_repository->FindByEmail(email);
     if (user.has_value() && domain::CheckPassword(password, user->password))
     {
         SILOK_LOG_DEBUG("Login successful for user: {}", user->name);
@@ -68,41 +62,45 @@ void UserService::Update(const domain::User& user)
     }
     auto upated_user = user;
 
-    auto existing_user =
-        infra::StorageManager::FindByField<domain::User>(&domain::User::id, user.id);
-    if (existing_user.empty())
+    auto existing_user = this->user_repository->FindById(user.id);
+    if (!existing_user.has_value())
     {
         SILOK_LOG_ERROR("User not found for update: {}", user.id);
         return;
     }
 
-    if (existing_user.front().password != user.password)
+    if (existing_user.value().password != user.password)
     {
         SILOK_LOG_DEBUG("Password change detected for user: {}", user.name);
         upated_user.password = domain::HashPassword(user.password);
     }
 
-    infra::StorageManager::Update(upated_user);
+    this->user_repository->Update(upated_user);
     SILOK_LOG_DEBUG("User updated: {}", upated_user.name);
+}
+
+std::optional<domain::User> UserService::FindByEmail(const std::string& email)
+{
+    auto user = this->user_repository->FindByEmail(email);
+    if (!user.has_value())
+    {
+        SILOK_LOG_ERROR("User not found with email: {}", email);
+        return std::nullopt;
+    }
+    SILOK_LOG_DEBUG("User found: {}", user->name);
+    return user;
 }
 
 void UserService::Delete(const domain::User& user)
 {
-    if (user.id <= 0)
-    {
-        SILOK_LOG_ERROR("Invalid user ID for deletion: {}", user.id);
-        return;
-    }
-
-    auto existing_user =
-        infra::StorageManager::FindByField<domain::User>(&domain::User::id, user.id);
-    if (existing_user.empty())
+    auto existing_user = this->user_repository->FindById(user.id);
+    if (!existing_user.has_value())
     {
         SILOK_LOG_ERROR("User not found for deletion: {}", user.id);
         return;
     }
 
-    infra::StorageManager::Remove(user);
+    this->user_repository->Delete(user.id);
     SILOK_LOG_DEBUG("User deleted: {}", user.name);
 }
 }  // namespace silok::application

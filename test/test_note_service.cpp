@@ -2,8 +2,9 @@
 
 #include "silok/application/note_service.hpp"
 #include "silok/application/user_service.hpp"
-#include "silok/domain/data.hpp"
-#include "silok/domain/data_relation.hpp"
+#include "silok/domain/model.hpp"
+#include "silok/domain/model_relation.hpp"
+#include "silok/infra/repository/user_repository.hpp"
 #include "silok/infra/storage_manager.hpp"
 
 class TestNoteService : public ::testing::Test
@@ -13,6 +14,9 @@ class TestNoteService : public ::testing::Test
     void SetUp() override
     {
         silok::infra::StorageManager::Initialize(":memory:", true);
+
+        this->user_service = silok::application::UserService(
+            std::make_shared<silok::infra::repository::UserRepository>());
     }
 
     // You can define per-test tear-down logic as needed.
@@ -20,12 +24,12 @@ class TestNoteService : public ::testing::Test
     {
         // Code here will be called immediately after each test (right before the destructor).
     }
+
+    silok::application::UserService user_service;
 };
 
 TEST_F(TestNoteService, NoteService_CreateAndFindAll)
 {
-    auto& user_service = silok::application::UserService::Get();
-
     user_service.Create("john.doe", "john.doe@test.com", "password");
 
     auto token = user_service.Login("john.doe@test.com", "password");
@@ -42,7 +46,6 @@ TEST_F(TestNoteService, NoteService_CreateAndFindAll)
 }
 TEST_F(TestNoteService, NoteService_MultipleNotes)
 {
-    auto& user_service = silok::application::UserService::Get();
     user_service.Create("alice", "alice@example.com", "pass");
     auto token = user_service.Login("alice@example.com", "pass");
     ASSERT_TRUE(token.has_value());
@@ -58,7 +61,6 @@ TEST_F(TestNoteService, NoteService_MultipleNotes)
 }
 TEST_F(TestNoteService, NoteService_OnlyOwnNotesReturned)
 {
-    auto& user_service = silok::application::UserService::Get();
     user_service.Create("bob", "bob@example.com", "pass");
     user_service.Create("carol", "carol@example.com", "pass");
 
@@ -80,7 +82,6 @@ TEST_F(TestNoteService, NoteService_OnlyOwnNotesReturned)
 }
 TEST_F(TestNoteService, NoteService_UpdateNote)
 {
-    auto& user_service = silok::application::UserService::Get();
     user_service.Create("dave", "dave@example.com", "pass");
     auto token = user_service.Login("dave@example.com", "pass");
 
@@ -101,7 +102,6 @@ TEST_F(TestNoteService, NoteService_UpdateNote)
 }
 TEST_F(TestNoteService, NoteService_DeleteNote)
 {
-    auto& user_service = silok::application::UserService::Get();
     user_service.Create("erin", "erin@example.com", "pass");
     auto token = user_service.Login("erin@example.com", "pass");
 

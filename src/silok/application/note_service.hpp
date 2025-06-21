@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "silok/domain/data.hpp"
-#include "silok/domain/data_relation.hpp"
+#include "silok/domain/model.hpp"
+#include "silok/domain/model_relation.hpp"
 
 #include "silok/infra/storage_manager.hpp"
 

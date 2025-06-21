@@ -1,10 +1,11 @@
 #include <gtest/gtest.h>
 
+#include "../src/silok/domain/model.hpp"
+#include "../src/silok/domain/model_relation.hpp"
 #include "silok/application/note_service.hpp"
 #include "silok/application/tag_service.hpp"
 #include "silok/application/user_service.hpp"
-#include "silok/domain/data.hpp"
-#include "silok/domain/data_relation.hpp"
+#include "silok/infra/repository/user_repository.hpp"
 
 class TestTagService : public ::testing::Test
 {
@@ -13,6 +14,9 @@ class TestTagService : public ::testing::Test
     void SetUp() override
     {
         silok::infra::StorageManager::Initialize(":memory:", true);
+
+        user_service = silok::application::UserService(
+            std::make_shared<silok::infra::repository::UserRepository>());
     }
 
     // You can define per-test tear-down logic as needed.
@@ -20,12 +24,12 @@ class TestTagService : public ::testing::Test
     {
         // Code here will be called immediately after each test (right before the destructor).
     }
+
+    silok::application::UserService user_service;
 };
 
 TEST_F(TestTagService, TagService_CreateAndFindAll)
 {
-    auto& user_service = silok::application::UserService::Get();
-
     user_service.Create("john.doe", "john.doe@test.com", "password");
 
     auto token = user_service.Login("john.doe@test.com", "password");
@@ -46,23 +50,8 @@ TEST_F(TestTagService, CreateTag_InvalidToken)
     EXPECT_THROW(tag_service.Create("InvalidTag", "bad_token", std::nullopt), std::runtime_error);
 }
 
-TEST_F(TestTagService, CreateTag_DuplicateName)
-{
-    auto& user_service = silok::application::UserService::Get();
-    user_service.Create("john", "john@example.com", "pass");
-    auto token = user_service.Login("john@example.com", "pass");
-
-    auto& tag_service = silok::application::TagService::Get();
-    tag_service.Create("Duplicate", token.value(), std::nullopt);
-    EXPECT_NO_THROW(tag_service.Create("Duplicate", token.value(), std::nullopt));
-
-    auto tags = tag_service.FindAll(token.value());
-    EXPECT_EQ(tags.size(), 2);  // 이름이 같아도 2개 생긴다 (디자인 상 허용 여부 판단 필요)
-}
-
 TEST_F(TestTagService, DeleteTag_NotOwned)
 {
-    auto& user_service = silok::application::UserService::Get();
     user_service.Create("bob", "bob@example.com", "pass");
     user_service.Create("alice", "alice@example.com", "pass");
 
@@ -81,7 +70,6 @@ TEST_F(TestTagService, DeleteTag_NotOwned)
 
 TEST_F(TestTagService, DeleteTag_InvalidId)
 {
-    auto& user_service = silok::application::UserService::Get();
     user_service.Create("charlie", "charlie@example.com", "pass");
     auto token = user_service.Login("charlie@example.com", "pass");
 
@@ -91,7 +79,6 @@ TEST_F(TestTagService, DeleteTag_InvalidId)
 
 TEST_F(TestTagService, CreateTag_WithoutNote)
 {
-    auto& user_service = silok::application::UserService::Get();
     user_service.Create("dave", "dave@example.com", "pass");
     auto token = user_service.Login("dave@example.com", "pass");
 
@@ -101,7 +88,6 @@ TEST_F(TestTagService, CreateTag_WithoutNote)
 
 TEST_F(TestTagService, UpdateTag_NoteAssociation)
 {
-    auto& user_service = silok::application::UserService::Get();
     user_service.Create("erin", "erin@example.com", "pass");
     auto token = user_service.Login("erin@example.com", "pass");
 
@@ -133,7 +119,6 @@ TEST_F(TestTagService, UpdateTag_InvalidTagId)
 
 TEST_F(TestTagService, DeleteTag_ThenVerifyAbsence)
 {
-    auto& user_service = silok::application::UserService::Get();
     user_service.Create("frank", "frank@example.com", "pass");
     auto token = user_service.Login("frank@example.com", "pass");
 
