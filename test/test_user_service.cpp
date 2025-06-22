@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "../src/silok/domain/model.hpp"
-#include "../src/silok/domain/model_relation.hpp"
-#include "silok/application/user_service.hpp"
+#include "silok/application/account_service.hpp"
+#include "silok/domain/model.hpp"
+#include "silok/domain/model_relation.hpp"
 #include "silok/infra/repository/user_repository.hpp"
 #include "silok/infra/storage_manager.hpp"
 
@@ -14,7 +14,7 @@ class TestUserService : public ::testing::Test
     {
         silok::infra::StorageManager::Initialize(":memory:", true);
 
-        user_service = silok::application::UserService(
+        user_service = silok::application::AccountService(
             std::make_shared<silok::infra::repository::UserRepository>());
     }
 
@@ -23,7 +23,7 @@ class TestUserService : public ::testing::Test
     {
         // Code here will be called immediately after each test (right before the destructor).
     }
-    silok::application::UserService user_service;
+    silok::application::AccountService user_service;
 };
 
 TEST_F(TestUserService, UserService_CreateAndFindUser)

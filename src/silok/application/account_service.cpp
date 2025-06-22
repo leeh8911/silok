@@ -1,4 +1,4 @@
-#include "silok/application/user_service.hpp"
+#include "silok/application/account_service.hpp"
 
 #include <optional>
 #include <string>
@@ -14,7 +14,7 @@
 namespace silok::application
 {
 
-UserService::UserService(silok::domain::repository::UserRepositoryPtr user_repository_)
+AccountService::AccountService(silok::domain::repository::UserRepositoryPtr user_repository_)
     : user_repository(std::move(user_repository_))
 {
     if (!user_repository)
@@ -24,8 +24,8 @@ UserService::UserService(silok::domain::repository::UserRepositoryPtr user_repos
     }
 }
 
-void UserService::Create(const std::string& name, const std::string& email,
-                         const std::string& password)
+void AccountService::Create(const std::string& name, const std::string& email,
+                            const std::string& password)
 {
     auto found = this->user_repository->FindByEmail(email);
     if (found.has_value())
@@ -42,7 +42,8 @@ void UserService::Create(const std::string& name, const std::string& email,
     this->user_repository->Create(user);
 }
 
-std::optional<std::string> UserService::Login(const std::string& email, const std::string& password)
+std::optional<std::string> AccountService::Login(const std::string& email,
+                                                 const std::string& password)
 {
     auto user = this->user_repository->FindByEmail(email);
     if (user.has_value() && domain::CheckPassword(password, user->password))
@@ -53,7 +54,7 @@ std::optional<std::string> UserService::Login(const std::string& email, const st
     return std::nullopt;
 }
 
-void UserService::Update(const domain::User& user)
+void AccountService::Update(const domain::User& user)
 {
     if (user.id <= 0)
     {
@@ -79,7 +80,7 @@ void UserService::Update(const domain::User& user)
     SILOK_LOG_DEBUG("User updated: {}", upated_user.name);
 }
 
-std::optional<domain::User> UserService::FindByEmail(const std::string& email)
+std::optional<domain::User> AccountService::FindByEmail(const std::string& email)
 {
     auto user = this->user_repository->FindByEmail(email);
     if (!user.has_value())
@@ -91,7 +92,7 @@ std::optional<domain::User> UserService::FindByEmail(const std::string& email)
     return user;
 }
 
-void UserService::Delete(const domain::User& user)
+void AccountService::Delete(const domain::User& user)
 {
     auto existing_user = this->user_repository->FindById(user.id);
     if (!existing_user.has_value())

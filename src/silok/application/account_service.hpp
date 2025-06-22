@@ -9,18 +9,18 @@
 
 namespace silok::application
 {
-class UserService
+class AccountService
 {
  public:
-    explicit UserService(silok::domain::repository::UserRepositoryPtr user_repository);
+    explicit AccountService(silok::domain::repository::UserRepositoryPtr user_repository);
 
-    UserService() = default;
-    UserService(const UserService&) = default;
-    UserService& operator=(const UserService&) = default;
-    UserService(UserService&&) = default;
-    UserService& operator=(UserService&&) = default;
+    AccountService() = default;
+    AccountService(const AccountService&) = default;
+    AccountService& operator=(const AccountService&) = default;
+    AccountService(AccountService&&) = default;
+    AccountService& operator=(AccountService&&) = default;
 
-    static UserService& Get();
+    static AccountService& Get();
 
     void Create(const std::string& name, const std::string& email, const std::string& password);
 

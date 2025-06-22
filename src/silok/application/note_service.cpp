@@ -7,12 +7,6 @@
 
 namespace silok::application
 {
-NoteService& NoteService::Get()
-{
-    static NoteService instance;
-    return instance;
-}
-
 void NoteService::Create(const std::string& content, std::string user_token)
 {
     auto user_id = domain::DecodeUserToken(user_token);
