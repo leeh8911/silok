@@ -34,17 +34,20 @@ inline auto makeStorage(const std::string& path)
                    make_column("name", &Project::name), make_column("start", &Project::start),
                    make_column("end", &Project::end), unique(&Project::name)),
         make_table("user_note", make_column("id", &UserNote::id, primary_key()),
-                   make_column("user_id", &UserNote::user_id),
-                   make_column("note_id", &UserNote::note_id)),
+                   make_column("first_id", &UserNote::first_id),
+                   make_column("second_id", &UserNote::second_id)),
         make_table("user_tag", make_column("id", &UserTag::id, primary_key()),
-                   make_column("user_id", &UserTag::user_id),
-                   make_column("tag_id", &UserTag::tag_id)),
+                   make_column("first_id", &UserTag::first_id),
+                   make_column("second_id", &UserTag::second_id)),
+        make_table("user_project", make_column("id", &UserProject::id, primary_key()),
+                   make_column("first_id", &UserProject::first_id),
+                   make_column("second_id", &UserProject::second_id)),
         make_table("note_tag", make_column("id", &NoteTag::id, primary_key()),
-                   make_column("note_id", &NoteTag::note_id),
-                   make_column("tag_id", &NoteTag::tag_id)),
+                   make_column("first_id", &NoteTag::first_id),
+                   make_column("second_id", &NoteTag::second_id)),
         make_table("note_project", make_column("id", &NoteProject::id, primary_key()),
-                   make_column("note_id", &NoteProject::note_id),
-                   make_column("project_id", &NoteProject::project_id)));
+                   make_column("first_id", &NoteProject::first_id),
+                   make_column("second_id", &NoteProject::second_id)));
 }
 
 using Storage = decltype(makeStorage(""));

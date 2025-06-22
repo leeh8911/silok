@@ -14,11 +14,11 @@ namespace silok::infra::repository
 class NoteTagRepository : public silok::domain::repository::NoteTagRepository
 {
  public:
-    virtual int64_t Create(const NoteTag&);
-    virtual std::optional<NoteTag> FindById(int64_t id);
-    virtual std::vector<NoteTag> FindByFirstId(int64_t first_id);
-    virtual std::vector<NoteTag> FindBySecondId(int64_t second_id);
-    virtual bool Update(const NoteTag& relation);
+    virtual int64_t Create(const silok::domain::NoteTag&);
+    virtual std::optional<silok::domain::NoteTag> FindById(int64_t id);
+    virtual std::vector<silok::domain::NoteTag> FindByFirstId(int64_t first_id);
+    virtual std::vector<silok::domain::NoteTag> FindBySecondId(int64_t second_id);
+    virtual bool Update(const silok::domain::NoteTag& relation);
     virtual void Delete(int64_t id);
 };
 }  // namespace silok::infra::repository

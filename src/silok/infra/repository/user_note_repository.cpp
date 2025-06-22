@@ -1,5 +1,3 @@
-#pragma once
-
 #include "silok/infra/repository/user_note_repository.hpp"
 
 #include <cstdint>
@@ -14,15 +12,17 @@
 
 namespace silok::infra::repository
 {
-int64_t UserNoteRepository::Create(const silok::domain::UserNote& relation)
+using silok::domain::UserNote;
+using silok::infra::StorageManager;
+
+int64_t UserNoteRepository::Create(const UserNote& relation)
 {
-    return infra::StorageManager::Insert(relation);
+    return StorageManager::Insert(relation);
 }
 
-std::optional<silok::domain::UserNote> UserNoteRepository::FindById(int64_t id)
+std::optional<UserNote> UserNoteRepository::FindById(int64_t id)
 {
-    auto relations = infra::StorageManager::FindByField<silok::domain::UserNote>(
-        &silok::domain::UserNote::id, id);
+    auto relations = StorageManager::FindByField<UserNote>(&UserNote::id, id);
     if (relations.empty())
     {
         return std::nullopt;
@@ -30,28 +30,32 @@ std::optional<silok::domain::UserNote> UserNoteRepository::FindById(int64_t id)
     return relations.front();
 }
 
-std::vector<silok::domain::UserNote> UserNoteRepository::FindByFirstId(int64_t first_id)
+std::vector<UserNote> UserNoteRepository::FindByFirstId(int64_t first_id)
 {
-    return infra::StorageManager::FindByField<silok::domain::UserNote>(
-        &silok::domain::UserNote::first_id, first_id);
+    return StorageManager::FindByField<UserNote>(&UserNote::first_id, first_id);
 }
 
-std::vector<silok::domain::UserNote> UserNoteRepository::FindBySecondId(int64_t second_id)
+std::vector<UserNote> UserNoteRepository::FindBySecondId(int64_t second_id)
 {
-    return infra::StorageManager::FindByField<silok::domain::UserNote>(
-        &silok::domain::UserNote::second_id, second_id);
+    return StorageManager::FindByField<UserNote>(&UserNote::second_id, second_id);
 }
 
-bool UserNoteRepository::Update(const silok::domain::UserNote& relation)
+bool UserNoteRepository::Update(const UserNote& relation)
 {
-    return infra::StorageManager::Update(relation);
+    try
+    {
+        StorageManager::Update(relation);
+        return true;
+    }
+    catch (const std::exception&)
+    {
+        return false;
+    }
 }
 
 void UserNoteRepository::Delete(int64_t id)
 {
-    silok::domain::UserNote relation = infra::StorageManager::FindByField<silok::domain::UserNote>(
-                                           &silok::domain::UserNote::id, id)
-                                           .front();
-    infra::StorageManager::Remove(relation);
+    UserNote relation = StorageManager::FindByField<UserNote>(&UserNote::id, id).front();
+    StorageManager::Remove(relation);
 }
 }  // namespace silok::infra::repository

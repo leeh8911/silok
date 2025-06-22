@@ -4,15 +4,18 @@
 
 namespace silok::infra::repository
 {
-int64_t NoteProjectRepository::Create(const silok::domain::NoteProject& relation)
+
+using silok::domain::NoteProject;
+using silok::infra::StorageManager;
+
+int64_t NoteProjectRepository::Create(const NoteProject& relation)
 {
-    return infra::StorageManager::Insert(relation);
+    return StorageManager::Insert(relation);
 }
 
-std::optional<silok::domain::NoteProject> NoteProjectRepository::FindById(int64_t id)
+std::optional<NoteProject> NoteProjectRepository::FindById(int64_t id)
 {
-    auto relations = infra::StorageManager::FindByField<silok::domain::NoteProject>(
-        &silok::domain::NoteProject::id, id);
+    auto relations = StorageManager::FindByField<NoteProject>(&NoteProject::id, id);
     if (relations.empty())
     {
         return std::nullopt;
@@ -20,30 +23,33 @@ std::optional<silok::domain::NoteProject> NoteProjectRepository::FindById(int64_
     return relations.front();
 }
 
-std::vector<silok::domain::NoteProject> NoteProjectRepository::FindByFirstId(int64_t first_id)
+std::vector<NoteProject> NoteProjectRepository::FindByFirstId(int64_t first_id)
 {
-    return infra::StorageManager::FindByField<silok::domain::NoteProject>(
-        &silok::domain::NoteProject::first_id, first_id);
+    return StorageManager::FindByField<NoteProject>(&NoteProject::first_id, first_id);
 }
 
-std::vector<silok::domain::NoteProject> NoteProjectRepository::FindBySecondId(int64_t second_id)
+std::vector<NoteProject> NoteProjectRepository::FindBySecondId(int64_t second_id)
 {
-    return infra::StorageManager::FindByField<silok::domain::NoteProject>(
-        &silok::domain::NoteProject::second_id, second_id);
+    return StorageManager::FindByField<NoteProject>(&NoteProject::second_id, second_id);
 }
 
-bool NoteProjectRepository::Update(const silok::domain::NoteProject& relation)
+bool NoteProjectRepository::Update(const NoteProject& relation)
 {
-    return infra::StorageManager::Update(relation);
+    try
+    {
+        StorageManager::Update(relation);
+        return true;
+    }
+    catch (const std::exception&)
+    {
+        return false;
+    }
 }
 
 void NoteProjectRepository::Delete(int64_t id)
 {
-    silok::domain::NoteProject relation =
-        infra::StorageManager::FindByField<silok::domain::NoteProject>(
-            &silok::domain::NoteProject::id, id)
-            .front();
-    infra::StorageManager::Remove(relation);
+    NoteProject relation = StorageManager::FindByField<NoteProject>(&NoteProject::id, id).front();
+    StorageManager::Remove(relation);
 }
 
 }  // namespace silok::infra::repository

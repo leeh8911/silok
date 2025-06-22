@@ -14,7 +14,7 @@ class UserRepository : public silok::domain::repository::BaseUserRepository
  public:
     ~UserRepository() override = default;
 
-    UserRepository();
+    UserRepository() = default;
     UserRepository(const UserRepository&) = default;
     UserRepository& operator=(const UserRepository&) = default;
     UserRepository(UserRepository&&) = default;

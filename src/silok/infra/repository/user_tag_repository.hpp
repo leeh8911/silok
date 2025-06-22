@@ -14,11 +14,11 @@ namespace silok::infra::repository
 class UserTagRepository : public silok::domain::repository::UserTagRepository
 {
  public:
-    virtual int64_t Create(const UserTag&);
-    virtual std::optional<UserTag> FindById(int64_t id);
-    virtual std::vector<UserTag> FindByFirstId(int64_t first_id);
-    virtual std::vector<UserTag> FindBySecondId(int64_t second_id);
-    virtual bool Update(const UserTag& relation);
+    virtual int64_t Create(const silok::domain::UserTag&);
+    virtual std::optional<silok::domain::UserTag> FindById(int64_t id);
+    virtual std::vector<silok::domain::UserTag> FindByFirstId(int64_t first_id);
+    virtual std::vector<silok::domain::UserTag> FindBySecondId(int64_t second_id);
+    virtual bool Update(const silok::domain::UserTag& relation);
     virtual void Delete(int64_t id);
 };
 }  // namespace silok::infra::repository

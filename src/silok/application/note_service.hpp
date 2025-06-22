@@ -34,13 +34,13 @@ class NoteService
  private:
     NoteService() = default;
 
-    NoteRepositoryPtr note_repository{nullptr};
-    TagRepositoryPtr tag_repository{nullptr};
-    ProjectRepositoryPtr project_repository{nullptr};
-    UserNoteRepositoryPtr user_note_repository{nullptr};
-    UserTagRepositoryPtr user_tag_repository{nullptr};
-    UserProjectRepositoryPtr user_project_repository{nullptr};
-    NoteTagRepositoryPtr note_tag_repository{nullptr};
-    NoteProjectRepositoryPtr note_project_repository{nullptr};
+    domain::repository::NoteRepositoryPtr note_repository{nullptr};
+    domain::repository::TagRepositoryPtr tag_repository{nullptr};
+    domain::repository::ProjectRepositoryPtr project_repository{nullptr};
+    domain::repository::UserNoteRepositoryPtr user_note_repository{nullptr};
+    domain::repository::UserTagRepositoryPtr user_tag_repository{nullptr};
+    domain::repository::UserProjectRepositoryPtr user_project_repository{nullptr};
+    domain::repository::NoteTagRepositoryPtr note_tag_repository{nullptr};
+    domain::repository::NoteProjectRepositoryPtr note_project_repository{nullptr};
 };
 }  // namespace silok::application

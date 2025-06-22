@@ -23,7 +23,7 @@ class TagRepository : public silok::domain::repository::BaseTagRepository
     int64_t Create(const silok::domain::Tag& tag) override;
     std::optional<silok::domain::Tag> FindById(int64_t id) override;
     std::vector<silok::domain::Tag> FindByIds(const std::vector<int64_t>& ids) override;
-    void Update(const silok::domain::Tag& tag) override;
+    bool Update(const silok::domain::Tag& tag) override;
     void Delete(int64_t id) override;
 };
 

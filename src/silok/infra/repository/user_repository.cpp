@@ -8,19 +8,17 @@
 namespace silok::infra::repository
 {
 
-UserRepository::UserRepository()
+using silok::domain::User;
+using silok::infra::StorageManager;
+
+int64_t UserRepository::Create(const User& user)
 {
-    SILOK_LOG_INFO("UserRepository initialized");
-}
-int64_t UserRepository::Create(const silok::domain::User& user)
-{
-    return infra::StorageManager::Insert(user);
+    return StorageManager::Insert(user);
 }
 
-std::optional<silok::domain::User> UserRepository::FindByEmail(const std::string& email)
+std::optional<User> UserRepository::FindByEmail(const std::string& email)
 {
-    auto users =
-        infra::StorageManager::FindByField<silok::domain::User>(&silok::domain::User::email, email);
+    auto users = StorageManager::FindByField<User>(&User::email, email);
     if (users.empty())
     {
         return std::nullopt;
@@ -28,10 +26,9 @@ std::optional<silok::domain::User> UserRepository::FindByEmail(const std::string
     return users.front();
 }
 
-std::optional<silok::domain::User> UserRepository::FindById(int64_t id)
+std::optional<User> UserRepository::FindById(int64_t id)
 {
-    auto users =
-        infra::StorageManager::FindByField<silok::domain::User>(&silok::domain::User::id, id);
+    auto users = StorageManager::FindByField<User>(&User::id, id);
     if (users.empty())
     {
         return std::nullopt;
@@ -39,11 +36,11 @@ std::optional<silok::domain::User> UserRepository::FindById(int64_t id)
     return users.front();
 }
 
-bool UserRepository::Update(const silok::domain::User& user)
+bool UserRepository::Update(const User& user)
 {
     try
     {
-        infra::StorageManager::Update(user);
+        StorageManager::Update(user);
         return true;
     }
     catch (const std::exception&)
@@ -53,9 +50,7 @@ bool UserRepository::Update(const silok::domain::User& user)
 }
 void UserRepository::Delete(int64_t id)
 {
-    silok::domain::User user =
-        infra::StorageManager::FindByField<silok::domain::User>(&silok::domain::User::id, id)
-            .front();
-    infra::StorageManager::Remove(user);
+    User user = StorageManager::FindByField<User>(&User::id, id).front();
+    StorageManager::Remove(user);
 }
 }  // namespace silok::infra::repository

@@ -23,7 +23,7 @@ class NoteRepository : public silok::domain::repository::BaseNoteRepository
     int64_t Create(const silok::domain::Note& note) override;
     std::optional<silok::domain::Note> FindById(int64_t id) override;
     std::vector<silok::domain::Note> FindByIds(const std::vector<int64_t>& ids) override;
-    void Update(const silok::domain::Note& note) override;
+    bool Update(const silok::domain::Note& note) override;
     void Delete(int64_t id) override;
 };
 

@@ -14,11 +14,11 @@ namespace silok::infra::repository
 class UserNoteRepository : public silok::domain::repository::UserNoteRepository
 {
  public:
-    virtual int64_t Create(const UserNote&);
-    virtual std::optional<UserNote> FindById(int64_t id);
-    virtual std::vector<UserNote> FindByFirstId(int64_t first_id);
-    virtual std::vector<UserNote> FindBySecondId(int64_t second_id);
-    virtual bool Update(const UserNote& relation);
+    virtual int64_t Create(const silok::domain::UserNote&);
+    virtual std::optional<silok::domain::UserNote> FindById(int64_t id);
+    virtual std::vector<silok::domain::UserNote> FindByFirstId(int64_t first_id);
+    virtual std::vector<silok::domain::UserNote> FindBySecondId(int64_t second_id);
+    virtual bool Update(const silok::domain::UserNote& relation);
     virtual void Delete(int64_t id);
 };
 }  // namespace silok::infra::repository

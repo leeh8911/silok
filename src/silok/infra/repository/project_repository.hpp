@@ -23,7 +23,7 @@ class ProjectRepository : public silok::domain::repository::BaseProjectRepositor
     int64_t Create(const silok::domain::Project& project) override;
     std::optional<silok::domain::Project> FindById(int64_t id) override;
     std::vector<silok::domain::Project> FindByIds(const std::vector<int64_t>& ids) override;
-    void Update(const silok::domain::Project& project) override;
+    bool Update(const silok::domain::Project& project) override;
     void Delete(int64_t id) override;
 };
 

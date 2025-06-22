@@ -1,17 +1,21 @@
 #include "silok/infra/repository/project_repository.hpp"
 
+#include "silok/infra/storage_manager.hpp"
+
 namespace silok::infra::repository
 {
 
-int64_t ProjectRepository::Create(const silok::domain::Project& project)
+using silok::domain::Project;
+using silok::infra::StorageManager;
+
+int64_t ProjectRepository::Create(const Project& project)
 {
-    return infra::StorageManager::Insert(project);
+    return StorageManager::Insert(project);
 }
 
-std::optional<silok::domain::Project> ProjectRepository::FindById(int64_t id)
+std::optional<Project> ProjectRepository::FindById(int64_t id)
 {
-    auto projects =
-        infra::StorageManager::FindByField<silok::domain::Project>(&silok::domain::Project::id, id);
+    auto projects = StorageManager::FindByField<Project>(&Project::id, id);
     if (projects.empty())
     {
         return std::nullopt;
@@ -19,23 +23,28 @@ std::optional<silok::domain::Project> ProjectRepository::FindById(int64_t id)
     return projects.front();
 }
 
-std::vector<silok::domain::Project> ProjectRepository::FindByIds(const std::vector<int64_t>& ids)
+std::vector<Project> ProjectRepository::FindByIds(const std::vector<int64_t>& ids)
 {
-    return infra::StorageManager::FindByFieldIn<silok::domain::Project>(&silok::domain::Project::id,
-                                                                        ids);
+    return StorageManager::FindByFieldIn<Project>(&Project::id, ids);
 }
 
-void ProjectRepository::Update(const silok::domain::Project& project)
+bool ProjectRepository::Update(const Project& project)
 {
-    infra::StorageManager::Update(project);
+    try
+    {
+        StorageManager::Update(project);
+        return true;
+    }
+    catch (const std::exception&)
+    {
+        return false;
+    }
 }
 
 void ProjectRepository::Delete(int64_t id)
 {
-    silok::domain::Project project =
-        infra::StorageManager::FindByField<silok::domain::Project>(&silok::domain::Project::id, id)
-            .front();
-    infra::StorageManager::Remove(project);
+    Project project = StorageManager::FindByField<Project>(&Project::id, id).front();
+    StorageManager::Remove(project);
 }
 
 }  // namespace silok::infra::repository

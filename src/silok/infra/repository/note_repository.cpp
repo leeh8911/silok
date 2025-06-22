@@ -6,17 +6,19 @@
 namespace silok::infra::repository
 {
 
-int64_t NoteRepository::Create(const silok::domain::Note& note)
+using silok::domain::Note;
+using silok::infra::StorageManager;
+
+int64_t NoteRepository::Create(const Note& note)
 {
     SILOK_LOG_INFO("Creating note with content: {}", note.content);
-    return infra::StorageManager::Insert(note);
+    return StorageManager::Insert(note);
 }
 
-std::optional<silok::domain::Note> NoteRepository::FindById(int64_t id)
+std::optional<Note> NoteRepository::FindById(int64_t id)
 {
     SILOK_LOG_INFO("Finding note by ID: {}", id);
-    auto notes =
-        infra::StorageManager::FindByField<silok::domain::Note>(&silok::domain::Note::id, id);
+    auto notes = StorageManager::FindByField<Note>(&Note::id, id);
     if (notes.empty())
     {
         return std::nullopt;
@@ -24,25 +26,30 @@ std::optional<silok::domain::Note> NoteRepository::FindById(int64_t id)
     return notes.front();
 }
 
-std::vector<silok::domain::Note> NoteRepository::FindByIds(const std::vector<int64_t>& ids)
+std::vector<Note> NoteRepository::FindByIds(const std::vector<int64_t>& ids)
 {
     SILOK_LOG_INFO("Finding notes by IDs");
-    return infra::StorageManager::FindByFieldIn<silok::domain::Note>(&silok::domain::Note::id, ids);
+    return StorageManager::FindByFieldIn<Note>(&Note::id, ids);
 }
 
-void NoteRepository::Update(const silok::domain::Note& note)
+bool NoteRepository::Update(const Note& note)
 {
-    SILOK_LOG_INFO("Updating note with ID: {}", note.id);
-    infra::StorageManager::Update(note);
+    try
+    {
+        StorageManager::Update(note);
+        return true;
+    }
+    catch (const std::exception&)
+    {
+        return false;
+    }
 }
 
 void NoteRepository::Delete(int64_t id)
 {
     SILOK_LOG_INFO("Deleting note with ID: {}", id);
-    silok::domain::Note note =
-        infra::StorageManager::FindByField<silok::domain::Note>(&silok::domain::Note::id, id)
-            .front();
-    infra::StorageManager::Remove(note);
+    Note note = StorageManager::FindByField<Note>(&Note::id, id).front();
+    StorageManager::Remove(note);
 }
 
 }  // namespace silok::infra::repository

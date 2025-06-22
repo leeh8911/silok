@@ -17,7 +17,7 @@ class BaseProjectRepository
     virtual int64_t Create(const silok::domain::Project& tag) = 0;
     virtual std::optional<silok::domain::Project> FindById(int64_t id) = 0;
     virtual std::vector<silok::domain::Project> FindByIds(const std::vector<int64_t>& ids) = 0;
-    virtual void Update(const silok::domain::Project& tag) = 0;
+    virtual bool Update(const silok::domain::Project& tag) = 0;
     virtual void Delete(int64_t id) = 0;
 };
 

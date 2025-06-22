@@ -15,15 +15,17 @@
 namespace silok::infra::repository
 {
 
-int64_t NoteTagRepository::Create(const silok::domain::NoteTag& relation)
+using silok::domain::NoteTag;
+using silok::infra::StorageManager;
+
+int64_t NoteTagRepository::Create(const NoteTag& relation)
 {
-    return infra::StorageManager::Insert(relation);
+    return StorageManager::Insert(relation);
 }
 
-std::optional<silok::domain::NoteTag> NoteTagRepository::FindById(int64_t id)
+std::optional<NoteTag> NoteTagRepository::FindById(int64_t id)
 {
-    auto relations =
-        infra::StorageManager::FindByField<silok::domain::NoteTag>(&silok::domain::NoteTag::id, id);
+    auto relations = StorageManager::FindByField<NoteTag>(&NoteTag::id, id);
     if (relations.empty())
     {
         return std::nullopt;
@@ -31,28 +33,32 @@ std::optional<silok::domain::NoteTag> NoteTagRepository::FindById(int64_t id)
     return relations.front();
 }
 
-std::vector<silok::domain::NoteTag> NoteTagRepository::FindByFirstId(int64_t first_id)
+std::vector<NoteTag> NoteTagRepository::FindByFirstId(int64_t first_id)
 {
-    return infra::StorageManager::FindByField<silok::domain::NoteTag>(
-        &silok::domain::NoteTag::first_id, first_id);
+    return StorageManager::FindByField<NoteTag>(&NoteTag::first_id, first_id);
 }
 
-std::vector<silok::domain::NoteTag> NoteTagRepository::FindBySecondId(int64_t second_id)
+std::vector<NoteTag> NoteTagRepository::FindBySecondId(int64_t second_id)
 {
-    return infra::StorageManager::FindByField<silok::domain::NoteTag>(
-        &silok::domain::NoteTag::second_id, second_id);
+    return StorageManager::FindByField<NoteTag>(&NoteTag::second_id, second_id);
 }
 
-bool NoteTagRepository::Update(const silok::domain::NoteTag& relation)
+bool NoteTagRepository::Update(const NoteTag& relation)
 {
-    return infra::StorageManager::Update(relation);
+    try
+    {
+        StorageManager::Update(relation);
+        return true;
+    }
+    catch (const std::exception&)
+    {
+        return false;
+    }
 }
 
 void NoteTagRepository::Delete(int64_t id)
 {
-    silok::domain::NoteTag relation =
-        infra::StorageManager::FindByField<silok::domain::NoteTag>(&silok::domain::NoteTag::id, id)
-            .front();
-    infra::StorageManager::Remove(relation);
+    NoteTag relation = StorageManager::FindByField<NoteTag>(&NoteTag::id, id).front();
+    StorageManager::Remove(relation);
 }
 }  // namespace silok::infra::repository

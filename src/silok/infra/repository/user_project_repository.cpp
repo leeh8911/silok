@@ -1,5 +1,3 @@
-#pragma once
-
 #include "silok/infra/repository/user_project_repository.hpp"
 
 #include <cstdint>
@@ -14,15 +12,18 @@
 
 namespace silok::infra::repository
 {
-int64_t UserProjectRepository::Create(const silok::domain::UserProject& relation)
+
+using silok::domain::UserProject;
+using silok::infra::StorageManager;
+
+int64_t UserProjectRepository::Create(const UserProject& relation)
 {
-    return infra::StorageManager::Insert(relation);
+    return StorageManager::Insert(relation);
 }
 
-std::optional<silok::domain::UserProject> UserProjectRepository::FindById(int64_t id)
+std::optional<UserProject> UserProjectRepository::FindById(int64_t id)
 {
-    auto relations = infra::StorageManager::FindByField<silok::domain::UserProject>(
-        &silok::domain::UserProject::id, id);
+    auto relations = StorageManager::FindByField<UserProject>(&UserProject::id, id);
     if (relations.empty())
     {
         return std::nullopt;
@@ -30,29 +31,32 @@ std::optional<silok::domain::UserProject> UserProjectRepository::FindById(int64_
     return relations.front();
 }
 
-std::vector<silok::domain::UserProject> UserProjectRepository::FindByFirstId(int64_t first_id)
+std::vector<UserProject> UserProjectRepository::FindByFirstId(int64_t first_id)
 {
-    return infra::StorageManager::FindByField<silok::domain::UserProject>(
-        &silok::domain::UserProject::first_id, first_id);
+    return StorageManager::FindByField<UserProject>(&UserProject::first_id, first_id);
 }
 
-std::vector<silok::domain::UserProject> UserProjectRepository::FindBySecondId(int64_t second_id)
+std::vector<UserProject> UserProjectRepository::FindBySecondId(int64_t second_id)
 {
-    return infra::StorageManager::FindByField<silok::domain::UserProject>(
-        &silok::domain::UserProject::second_id, second_id);
+    return StorageManager::FindByField<UserProject>(&UserProject::second_id, second_id);
 }
 
-bool UserProjectRepository::Update(const silok::domain::UserProject& relation)
+bool UserProjectRepository::Update(const UserProject& relation)
 {
-    return infra::StorageManager::Update(relation);
+    try
+    {
+        StorageManager::Update(relation);
+        return true;
+    }
+    catch (const std::exception&)
+    {
+        return false;
+    }
 }
 
 void UserProjectRepository::Delete(int64_t id)
 {
-    silok::domain::UserProject relation =
-        infra::StorageManager::FindByField<silok::domain::UserProject>(
-            &silok::domain::UserProject::id, id)
-            .front();
-    infra::StorageManager::Remove(relation);
+    UserProject relation = StorageManager::FindByField<UserProject>(&UserProject::id, id).front();
+    StorageManager::Remove(relation);
 }
 }  // namespace silok::infra::repository
