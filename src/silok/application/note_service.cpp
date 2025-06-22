@@ -1,18 +1,12 @@
 #include "silok/application/note_service.hpp"
 
-#include "silok/domain/data.hpp"
-#include "silok/domain/data_relation.hpp"
+#include "silok/domain/model.hpp"
+#include "silok/domain/model_relation.hpp"
 #include "silok/domain/user_token.hpp"
 #include "silok/infra/storage_manager.hpp"
 
 namespace silok::application
 {
-NoteService& NoteService::Get()
-{
-    static NoteService instance;
-    return instance;
-}
-
 void NoteService::Create(const std::string& content, std::string user_token)
 {
     auto user_id = domain::DecodeUserToken(user_token);
@@ -28,11 +22,11 @@ void NoteService::Create(const std::string& content, std::string user_token)
 
     auto note_id = infra::StorageManager::Insert(note);
 
-    domain::UserNote note_user;
-    note_user.note_id = note_id;
-    note_user.user_id = user_id.value();
+    domain::UserNote user_note;
+    user_note.second_id = note_id;
+    user_note.first_id = user_id.value();
 
-    infra::StorageManager::Insert(note_user);
+    infra::StorageManager::Insert(user_note);
 }
 
 std::vector<domain::Note> NoteService::FindAll(std::string user_token)
@@ -44,12 +38,12 @@ std::vector<domain::Note> NoteService::FindAll(std::string user_token)
     }
 
     auto user_note =
-        infra::StorageManager::FindByField(&domain::UserNote::user_id, user_id.value());
+        infra::StorageManager::FindByField(&domain::UserNote::first_id, user_id.value());
     if (user_note.empty())
     {
         return {};  // 해당 사용자의 노트가 없으면 빈 벡터 반환
     }
-    auto lambda = [](const domain::UserNote& note_user) { return note_user.note_id; };
+    auto lambda = [](const domain::UserNote& user_note) { return user_note.second_id; };
     std::vector<int64_t> note_ids{};
 
     std::transform(user_note.begin(), user_note.end(), std::back_inserter(note_ids), lambda);
@@ -89,7 +83,7 @@ void NoteService::Delete(int64_t note_id, std::string user_token)
     }
 
     auto note_user =
-        infra::StorageManager::FindByField<domain::UserNote>(&domain::UserNote::note_id, note_id);
+        infra::StorageManager::FindByField<domain::UserNote>(&domain::UserNote::second_id, note_id);
 
     infra::StorageManager::Remove(notes.front());
     infra::StorageManager::Remove(note_user.front());

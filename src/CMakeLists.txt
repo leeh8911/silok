@@ -9,6 +9,7 @@ add_library(${PROJECT_LIB} STATIC ${SOURCE_FILES} ${GENERATED_SOURCES})
 target_include_directories(${PROJECT_LIB} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     /usr/local/include
+    /usr/local/include/bcrypt
 )
 
 find_package(OpenSSL REQUIRED)
