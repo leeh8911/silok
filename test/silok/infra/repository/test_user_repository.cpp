@@ -31,3 +31,27 @@ TEST_F(UserRepositoryTest, CreateUser)
     auto user_id = user_repository.Create(user);
     ASSERT_GT(user_id, 0);
 }
+
+TEST_F(UserRepositoryTest, FindUpdateAndDelete)
+{
+    silok::infra::repository::UserRepository repo;
+    silok::domain::User user{0, "name", "mail@test", "pw"};
+    auto id = repo.Create(user);
+
+    auto found = repo.FindByEmail("mail@test");
+    ASSERT_TRUE(found.has_value());
+    EXPECT_EQ(found->id, id);
+
+    found = repo.FindById(id);
+    ASSERT_TRUE(found.has_value());
+
+    user.id = id;
+    user.name = "changed";
+    EXPECT_TRUE(repo.Update(user));
+    found = repo.FindById(id);
+    ASSERT_TRUE(found.has_value());
+    EXPECT_EQ(found->name, "changed");
+
+    repo.Delete(id);
+    EXPECT_FALSE(repo.FindById(id).has_value());
+}
