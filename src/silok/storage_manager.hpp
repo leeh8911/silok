@@ -103,6 +103,7 @@ class StorageManager
         std::lock_guard<std::mutex> lock(mutex_);
         CheckInitialized();
         static_assert(requires { data.id; }, "Type T must have an id field for Remove()");
+        SILOK_LOG_WARN("Removing record with ID: {}", data.id);
         instance_->storage_->remove<T>(data.id);
     }
 

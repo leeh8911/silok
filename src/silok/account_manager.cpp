@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "account_manager.hpp"
 #include "silok/crypt.hpp"
 #include "silok/jwt_utils.hpp"
 #include "silok/model.hpp"
@@ -75,5 +76,18 @@ std::optional<User> AccountManager::GetAccountInfo(const std::string& token) con
         std::cerr << "Invalid token\n";
     }
     return std::optional<User>();
+}
+
+void AccountManager::DeleteAccount(const User& user, const std::string& token)
+{
+    auto user_id = DecodeUserToken(token);
+    if (user_id.has_value() && user_id.value() == user.id)
+    {
+        StorageManager::Remove(user);
+    }
+    else
+    {
+        std::cerr << "Invalid token\n";
+    }
 }
 }  // namespace silok

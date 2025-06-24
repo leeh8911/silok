@@ -82,3 +82,25 @@ TEST_F(TestAccountManagement, FR_1_4_Crypt_user_password)
     EXPECT_EQ(account_info->email, email);
     EXPECT_NE(account_info->password, password);  // Password should be hashed
 }
+
+TEST_F(TestAccountManagement, FR_1_5_Delete_user_account)
+{
+    silok::AccountManager manager{};
+
+    std::string username = "john doe";
+    std::string password = "password123";
+    std::string email = "john.doe@test.com";
+
+    manager.CreateAccount(username, password, email);
+
+    auto token = manager.Login(email, password);
+
+    auto account_info = manager.GetAccountInfo(token.value());
+
+    manager.DeleteAccount(account_info.value(), token.value());
+
+    account_info = manager.GetAccountInfo(token.value());
+
+    EXPECT_FALSE(account_info.has_value())
+        << account_info.value().name;  // Account should be deleted
+}

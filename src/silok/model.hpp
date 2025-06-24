@@ -12,4 +12,5 @@ struct User
     std::string email;
     std::string password;
 };
+
 }  // namespace silok

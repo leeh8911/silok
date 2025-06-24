@@ -19,5 +19,7 @@ class AccountManager
     std::optional<std::string> Login(const std::string& email, const std::string& password) const;
 
     std::optional<User> GetAccountInfo(const std::string& token) const;
+
+    void DeleteAccount(const User& user, const std::string& token);
 };
 }  // namespace silok
