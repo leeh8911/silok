@@ -8,46 +8,20 @@
 
 #include <sqlite_orm/sqlite_orm.h>
 
-#include "silok/domain/model.hpp"
-#include "silok/domain/model_relation.hpp"
+#include "silok/logger.hpp"
+#include "silok/model.hpp"
 
-namespace silok::infra
+namespace silok
 {
 
 inline auto makeStorage(const std::string& path)
 {
     using namespace sqlite_orm;
-    using namespace ::silok::domain;
 
     return make_storage(
-        path,
-        make_table("user", make_column("id", &User::id, primary_key()),
-                   make_column("name", &User::name), make_column("email", &User::email),
-                   make_column("password", &User::password), unique(&User::email)),
-        make_table("note", make_column("id", &Note::id, primary_key()),
-                   make_column("content", &Note::content),
-                   make_column("created_at", &Note::created_at),
-                   make_column("updated_at", &Note::updated_at)),
-        make_table("tag", make_column("id", &Tag::id, primary_key()),
-                   make_column("name", &Tag::name), unique(&Tag::name)),
-        make_table("project", make_column("id", &Project::id, primary_key()),
-                   make_column("name", &Project::name), make_column("start", &Project::start),
-                   make_column("end", &Project::end), unique(&Project::name)),
-        make_table("user_note", make_column("id", &UserNote::id, primary_key()),
-                   make_column("first_id", &UserNote::first_id),
-                   make_column("second_id", &UserNote::second_id)),
-        make_table("user_tag", make_column("id", &UserTag::id, primary_key()),
-                   make_column("first_id", &UserTag::first_id),
-                   make_column("second_id", &UserTag::second_id)),
-        make_table("user_project", make_column("id", &UserProject::id, primary_key()),
-                   make_column("first_id", &UserProject::first_id),
-                   make_column("second_id", &UserProject::second_id)),
-        make_table("note_tag", make_column("id", &NoteTag::id, primary_key()),
-                   make_column("first_id", &NoteTag::first_id),
-                   make_column("second_id", &NoteTag::second_id)),
-        make_table("note_project", make_column("id", &NoteProject::id, primary_key()),
-                   make_column("first_id", &NoteProject::first_id),
-                   make_column("second_id", &NoteProject::second_id)));
+        path, make_table("user", make_column("id", &User::id, primary_key()),
+                         make_column("name", &User::name), make_column("email", &User::email),
+                         make_column("password", &User::password)));
 }
 
 using Storage = decltype(makeStorage(""));
@@ -64,6 +38,7 @@ class StorageManager
     static void Initialize(const std::string& db_path, bool is_test = false)
     {
         std::lock_guard<std::mutex> lock(mutex_);
+        SILOK_LOG_DEBUG("Initializing StorageManager with path: {}", db_path);
         if (instance_ && !is_test)
         {
             throw std::runtime_error("StorageManager already initialized");
@@ -83,7 +58,9 @@ class StorageManager
     {
         std::lock_guard<std::mutex> lock(mutex_);
         CheckInitialized();
-        return instance_->storage_->insert(data);
+        auto id = instance_->storage_->insert(data);
+        data.id = id;
+        return id;
     }
 
     /**
@@ -258,4 +235,4 @@ class StorageManager
     static inline std::mutex mutex_;
 };
 
-}  // namespace silok::infra
+}  // namespace silok
