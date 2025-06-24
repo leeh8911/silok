@@ -44,3 +44,41 @@ TEST_F(TestAccountManagement, FR_1_2_Login_user_account)
     auto token = manager.Login(email, password);
     EXPECT_TRUE(token.has_value());
 }
+TEST_F(TestAccountManagement, FR_1_3_Is_unique_user_email_information)
+{
+    silok::AccountManager manager{};
+    {
+        std::string username = "john doe";
+        std::string password = "password123";
+        std::string email = "john.doe@test.com";
+
+        manager.CreateAccount(username, password, email);
+    }
+    {
+        std::string username = "jane doe";
+        std::string password = "somepassword";
+        std::string email = "john.doe@test.com";  // Duplicate email
+
+        EXPECT_THROW(manager.CreateAccount(username, password, email), std::runtime_error);
+    }
+}
+
+TEST_F(TestAccountManagement, FR_1_4_Crypt_user_password)
+{
+    silok::AccountManager manager{};
+
+    std::string username = "john doe";
+    std::string password = "password123";
+    std::string email = "john.doe@test.com";
+
+    manager.CreateAccount(username, password, email);
+
+    auto token = manager.Login(email, password);
+
+    auto account_info = manager.GetAccountInfo(token.value());
+    EXPECT_TRUE(account_info.has_value());
+
+    EXPECT_EQ(account_info->name, username);
+    EXPECT_EQ(account_info->email, email);
+    EXPECT_NE(account_info->password, password);  // Password should be hashed
+}

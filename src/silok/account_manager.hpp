@@ -3,6 +3,8 @@
 #include <optional>
 #include <string>
 
+#include "silok/model.hpp"
+
 namespace silok
 {
 
@@ -14,6 +16,8 @@ class AccountManager
     void CreateAccount(const std::string& username, const std::string& password,
                        const std::string& email);
 
-    std::optional<std::string> Login(const std::string& email, const std::string& password);
+    std::optional<std::string> Login(const std::string& email, const std::string& password) const;
+
+    std::optional<User> GetAccountInfo(const std::string& token) const;
 };
 }  // namespace silok

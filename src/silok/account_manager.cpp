@@ -5,6 +5,9 @@
 #include <stdexcept>
 #include <string>
 
+#include "silok/crypt.hpp"
+#include "silok/jwt_utils.hpp"
+#include "silok/model.hpp"
 #include "silok/storage_manager.hpp"
 
 namespace silok
@@ -12,26 +15,32 @@ namespace silok
 void AccountManager::CreateAccount(const std::string& username, const std::string& password,
                                    const std::string& email)
 {
+    auto existing_users = StorageManager::FindByField<User>(&User::email, email);
+    if (!existing_users.empty())
+    {
+        throw std::runtime_error("Email already exists");
+    }
+
     User user;
     user.name = username;
     user.email = email;
-    user.password = password;
+    user.password = HashPassword(password);
 
     // Insert the new user into the storage
     StorageManager::Insert(user);
 }
 
 std::optional<std::string> AccountManager::Login(const std::string& email,
-                                                 const std::string& password)
+                                                 const std::string& password) const
 {
     try
     {
         auto user = StorageManager::FindByField<User>(&User::email, email).front();
 
-        if (user.password == password)
+        if (CheckPassword(password, user.password))
         {
             // In a real application, you would generate a token here
-            return "dummy_token";  // Placeholder for a real token
+            return EncodeUserToken(user.id);
         }
         else
         {
@@ -43,5 +52,28 @@ std::optional<std::string> AccountManager::Login(const std::string& email,
         std::cerr << e.what() << '\n';
         return std::nullopt;  // User not found
     }
+}
+
+std::optional<User> AccountManager::GetAccountInfo(const std::string& token) const
+{
+    auto user_id = DecodeUserToken(token);
+
+    if (user_id.has_value())
+    {
+        auto users = StorageManager::FindByField<User>(&User::id, user_id.value());
+        if (!users.empty())
+        {
+            return users.front();
+        }
+        else
+        {
+            std::cerr << "User not found for ID: " << user_id.value() << '\n';
+        }
+    }
+    else
+    {
+        std::cerr << "Invalid token\n";
+    }
+    return std::optional<User>();
 }
 }  // namespace silok
