@@ -1,12 +1,10 @@
 #pragma once
 
-#include <chrono>
 #include <cstdint>
 #include <string>
 
-namespace silok::domain
+namespace silok
 {
-
 struct User
 {
     int64_t id;
@@ -14,6 +12,7 @@ struct User
     std::string email;
     std::string password;
 };
+
 struct Note
 {
     int64_t id;
@@ -21,16 +20,13 @@ struct Note
     int64_t created_at;
     int64_t updated_at;
 };
-struct Tag
+
+struct UserNote
 {
-    int64_t id;        // ID
-    std::string name;  // 태그 내용
+    int64_t id;
+    int64_t user_id;
+    int64_t note_id;
+    std::string role;
 };
-struct Project
-{
-    int64_t id;        // ID
-    std::string name;  //
-    int64_t start;
-    int64_t end;
-};
-}  // namespace silok::domain
+
+}  // namespace silok

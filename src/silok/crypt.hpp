@@ -6,7 +6,7 @@
 
 #include "silok/logger.hpp"
 
-namespace silok::domain
+namespace silok
 {
 #include <bcrypt.h>
 
@@ -35,4 +35,4 @@ bool CheckPassword(const std::string& password, const std::string& hash)
     return bcrypt_checkpw(password.c_str(), hash.c_str()) == 0;
 }
 
-}  // namespace silok::domain
+}  // namespace silok

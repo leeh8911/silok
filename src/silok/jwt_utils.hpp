@@ -2,7 +2,11 @@
 
 #include <jwt-cpp/jwt.h>
 
-namespace silok::domain
+#include <cstdint>
+#include <optional>
+#include <string>
+
+namespace silok
 {
 
 inline std::string getSecret()
@@ -49,4 +53,4 @@ inline std::optional<int64_t> DecodeUserToken(const std::string& token_str)
     }
 }
 
-}  // namespace silok::domain
+}  // namespace silok
