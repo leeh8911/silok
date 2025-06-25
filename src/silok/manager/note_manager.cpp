@@ -39,24 +39,48 @@ std::vector<Note> NoteManager::GetAllNotes(const User user) const
 
 void NoteManager::UpdateNote(Note note, const User user)
 {
-    auto user_notes = StorageManager::FindByField<UserNote>(&UserNote::note_id, note.id);
-    if (user_notes.empty())
+    if (!this->hasPermission(user, note))
     {
-        SILOK_LOG_ERROR("No user notes found for note ID: {}", note.id);
+        SILOK_LOG_ERROR("User {} does not have permission to update note ID: {}", user.email,
+                        note.id);
         return;
     }
-    if (std::none_of(user_notes.begin(), user_notes.end(), [&user](const UserNote& un)
-                     { return ((un.user_id == user.id) && (un.role == "owner")); }))
+    note.updated_at =
+        std::chrono::system_clock::now().time_since_epoch().count();  // Update timestamp
+
+    SILOK_LOG_INFO("User {} is updating note '{}...'", user.email, note.content.substr(0, 20));
+    StorageManager::Update(note);
+}
+
+void NoteManager::DeleteNote(Note note, const User user)
+{
+    if (!this->hasPermission(user, note))
     {
         SILOK_LOG_ERROR("User {} does not have permission to update note ID: {}", user.email,
                         note.id);
         return;
     }
 
-    note.updated_at =
-        std::chrono::system_clock::now().time_since_epoch().count();  // Update timestamp
+    SILOK_LOG_INFO("User {} is deleting note '{}...'", user.email, note.content.substr(0, 20));
+    StorageManager::Remove(note);
+}
 
-    SILOK_LOG_INFO("User {} is updating note '{}...'", user.email, note.content.substr(0, 20));
-    StorageManager::Update(note);
+bool NoteManager::hasPermission(const User& user, const Note& note) const
+{
+    bool result = true;
+    auto user_notes = StorageManager::FindByFields<UserNote>(&UserNote::user_id, user.id,
+                                                             &UserNote::note_id, note.id);
+    if (user_notes.empty())
+    {
+        SILOK_LOG_ERROR("User {} does not have any notes with ID: {}", user.email, note.id);
+        result = false;
+    }
+    if (user_notes.front().role != "owner")
+    {
+        SILOK_LOG_ERROR("User {} does not have permission to access note ID: {}", user.email,
+                        note.id);
+        result = false;
+    }
+    return result;
 }
 }  // namespace silok::manager

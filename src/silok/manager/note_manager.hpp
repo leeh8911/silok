@@ -15,5 +15,9 @@ class NoteManager
     void CreateNote(const std::string& content, const User user);
     std::vector<Note> GetAllNotes(const User user) const;
     void UpdateNote(Note note, const User user);
+    void DeleteNote(Note note, const User user);
+
+ private:
+    bool hasPermission(const User& user, const Note& note) const;
 };
 }  // namespace silok::manager

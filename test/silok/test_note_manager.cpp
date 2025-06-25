@@ -60,3 +60,20 @@ TEST_F(TestNoteManager, FR_2_2_Update_note)
     EXPECT_EQ(note.created_at, updated_note.created_at);
     EXPECT_NE(note.updated_at, updated_note.updated_at);
 }
+
+TEST_F(TestNoteManager, FR_2_3_Delete_note)
+{
+    silok::manager::NoteManager manager{};
+
+    std::string content = "This is a test note.";
+    manager.CreateNote(content, user_info);
+
+    auto notes = manager.GetAllNotes(user_info);
+    EXPECT_EQ(notes.size(), 1);
+
+    auto& note = notes.front();
+    EXPECT_NO_THROW(manager.DeleteNote(note, user_info));
+
+    auto deleted_notes = manager.GetAllNotes(user_info);
+    EXPECT_TRUE(deleted_notes.empty());
+}
