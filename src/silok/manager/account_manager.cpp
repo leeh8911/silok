@@ -1,17 +1,16 @@
-#include "silok/account_manager.hpp"
+#include "silok/manager/account_manager.hpp"
 
 #include <iostream>
 #include <optional>
 #include <stdexcept>
 #include <string>
 
-#include "account_manager.hpp"
 #include "silok/crypt.hpp"
 #include "silok/jwt_utils.hpp"
+#include "silok/manager/storage_manager.hpp"
 #include "silok/model.hpp"
-#include "silok/storage_manager.hpp"
 
-namespace silok
+namespace silok::manager
 {
 void AccountManager::CreateAccount(const std::string& username, const std::string& password,
                                    const std::string& email)
@@ -90,4 +89,4 @@ void AccountManager::DeleteAccount(const User& user, const std::string& token)
         std::cerr << "Invalid token\n";
     }
 }
-}  // namespace silok
+}  // namespace silok::manager

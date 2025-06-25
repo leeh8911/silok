@@ -11,7 +11,7 @@
 #include "silok/logger.hpp"
 #include "silok/model.hpp"
 
-namespace silok
+namespace silok::manager
 {
 
 inline auto makeStorage(const std::string& path)
@@ -19,9 +19,18 @@ inline auto makeStorage(const std::string& path)
     using namespace sqlite_orm;
 
     return make_storage(
-        path, make_table("user", make_column("id", &User::id, primary_key()),
-                         make_column("name", &User::name), make_column("email", &User::email),
-                         make_column("password", &User::password)));
+        path,
+        make_table("user", make_column("id", &User::id, primary_key()),
+                   make_column("name", &User::name), make_column("email", &User::email),
+                   make_column("password", &User::password)),
+        make_table("note", make_column("id", &Note::id, primary_key()),
+                   make_column("content", &Note::content),
+                   make_column("created_at", &Note::created_at),
+                   make_column("updated_at", &Note::updated_at)),
+        make_table("user_note", make_column("id", &UserNote::id, primary_key()),
+                   make_column("user_id", &UserNote::user_id),
+                   make_column("note_id", &UserNote::note_id),
+                   make_column("role", &UserNote::role)));
 }
 
 using Storage = decltype(makeStorage(""));
@@ -236,4 +245,4 @@ class StorageManager
     static inline std::mutex mutex_;
 };
 
-}  // namespace silok
+}  // namespace silok::manager

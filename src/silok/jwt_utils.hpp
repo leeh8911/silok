@@ -2,6 +2,10 @@
 
 #include <jwt-cpp/jwt.h>
 
+#include <cstdint>
+#include <optional>
+#include <string>
+
 namespace silok
 {
 

@@ -5,7 +5,7 @@
 
 #include "silok/model.hpp"
 
-namespace silok
+namespace silok::manager
 {
 
 class AccountManager
@@ -22,4 +22,4 @@ class AccountManager
 
     void DeleteAccount(const User& user, const std::string& token);
 };
-}  // namespace silok
+}  // namespace silok::manager

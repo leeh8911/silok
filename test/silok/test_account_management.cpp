@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include "silok/account_manager.hpp"
-#include "silok/storage_manager.hpp"
+#include "silok/manager/account_manager.hpp"
+#include "silok/manager/storage_manager.hpp"
 
 class TestAccountManagement : public ::testing::Test
 {
@@ -11,18 +11,18 @@ class TestAccountManagement : public ::testing::Test
     void SetUp() override
     {
         // Initialize the storage manager with a test database path
-        silok::StorageManager::Initialize(":memory:", true);
+        silok::manager::StorageManager::Initialize(":memory:", true);
     }
     void TearDown() override
     {
         // Reset the storage manager after each test
-        silok::StorageManager::reset();
+        silok::manager::StorageManager::reset();
     }
 };
 
 TEST_F(TestAccountManagement, FR_1_1_Create_user_account)
 {
-    silok::AccountManager manager{};
+    silok::manager::AccountManager manager{};
 
     std::string username = "john doe";
     std::string password = "password123";
@@ -33,7 +33,7 @@ TEST_F(TestAccountManagement, FR_1_1_Create_user_account)
 
 TEST_F(TestAccountManagement, FR_1_2_Login_user_account)
 {
-    silok::AccountManager manager{};
+    silok::manager::AccountManager manager{};
 
     std::string username = "john doe";
     std::string password = "password123";
@@ -46,7 +46,7 @@ TEST_F(TestAccountManagement, FR_1_2_Login_user_account)
 }
 TEST_F(TestAccountManagement, FR_1_3_Is_unique_user_email_information)
 {
-    silok::AccountManager manager{};
+    silok::manager::AccountManager manager{};
     {
         std::string username = "john doe";
         std::string password = "password123";
@@ -65,7 +65,7 @@ TEST_F(TestAccountManagement, FR_1_3_Is_unique_user_email_information)
 
 TEST_F(TestAccountManagement, FR_1_4_Crypt_user_password)
 {
-    silok::AccountManager manager{};
+    silok::manager::AccountManager manager{};
 
     std::string username = "john doe";
     std::string password = "password123";
@@ -85,7 +85,7 @@ TEST_F(TestAccountManagement, FR_1_4_Crypt_user_password)
 
 TEST_F(TestAccountManagement, FR_1_5_Delete_user_account)
 {
-    silok::AccountManager manager{};
+    silok::manager::AccountManager manager{};
 
     std::string username = "john doe";
     std::string password = "password123";
