@@ -36,3 +36,27 @@ TEST_F(TestNoteManager, FR_2_1_Create_note)
 
     EXPECT_NO_THROW(manager.CreateNote(content, user_info));
 }
+
+TEST_F(TestNoteManager, FR_2_2_Update_note)
+{
+    silok::manager::NoteManager manager{};
+
+    std::string content = "This is a test note.";
+    manager.CreateNote(content, user_info);
+
+    auto notes = manager.GetAllNotes(user_info);
+    EXPECT_EQ(notes.size(), 1);
+
+    auto& note = notes.front();
+
+    note.content = "This is an updated test note.";
+    manager.UpdateNote(note, user_info);
+
+    auto updated_notes = manager.GetAllNotes(user_info);
+    EXPECT_EQ(updated_notes.size(), 1);
+
+    auto& updated_note = updated_notes.front();
+    EXPECT_EQ(updated_note.content, "This is an updated test note.");
+    EXPECT_EQ(note.created_at, updated_note.created_at);
+    EXPECT_NE(note.updated_at, updated_note.updated_at);
+}
