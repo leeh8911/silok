@@ -14,6 +14,26 @@ void TagManager::CreateTag(const std::string& tag_name, const User user)
     Tag tag;
     tag.name = tag_name;
 
+    auto user_tags =
+        StorageManager::FindByFields<UserTag>(&UserTag::user_id, user.id, &UserTag::role, "owner");
+    if (user_tags.empty())
+    {
+        SILOK_LOG_ERROR("User ID: {} does not have any tags associated", user.id);
+        return;
+    }
+
+    std::vector<int64_t> tag_ids{};
+    std::transform(user_tags.begin(), user_tags.end(), std::back_inserter(tag_ids),
+                   [](const UserTag& ut) { return ut.tag_id; });
+
+    auto tags = StorageManager::FindByFieldIn<Tag>(&Tag::id, tag_ids);
+    if (std::any_of(tags.begin(), tags.end(),
+                    [&tag_name](const Tag& tag) { return tag.name == tag_name; }))
+    {
+        SILOK_LOG_ERROR("Tag '{}' already exists for user ID: {}", tag_name, user.id);
+        return;
+    }
+
     auto tag_id = StorageManager::Insert(tag);
 
     UserTag user_tag;
