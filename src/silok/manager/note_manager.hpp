@@ -18,6 +18,5 @@ class NoteManager
     void DeleteNote(Note note, const User user);
 
  private:
-    bool hasPermission(const User& user, const Note& note) const;
 };
 }  // namespace silok::manager
