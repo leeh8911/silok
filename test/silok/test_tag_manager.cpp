@@ -106,3 +106,20 @@ TEST_F(TestTagManager, FR_3_4_Get_all_notes_from_tag)
                                 [&note](const silok::Note& n) { return n.id == note.id; }));
     }
 }
+
+TEST_F(TestTagManager, FR_3_5_Unique_tag_name)
+{
+    silok::manager::TagManager manager{};
+
+    std::string tag_name = "Unique Tag";
+    manager.CreateTag(tag_name, user_info);
+
+    // Attempt to create a tag with the same name
+    manager.CreateTag(tag_name, user_info);
+    auto tags = manager.GetAllTags(user_info);
+    EXPECT_EQ(tags.size(), 1);  // Ensure only one tag with the unique name exists
+
+    // Create a different tag
+    std::string another_tag_name = "Another Unique Tag";
+    EXPECT_NO_THROW(manager.CreateTag(another_tag_name, user_info));
+}
