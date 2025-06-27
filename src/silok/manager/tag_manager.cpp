@@ -9,6 +9,7 @@
 
 namespace silok::manager
 {
+
 void TagManager::CreateTag(const std::string& tag_name, const User user)
 {
     Tag tag;

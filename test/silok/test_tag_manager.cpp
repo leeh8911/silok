@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "silok/manager/account_manager.hpp"
+#include "silok/manager/note_manager.hpp"
 #include "silok/manager/storage_manager.hpp"
 #include "silok/manager/tag_manager.hpp"
 #include "silok/model.hpp"
@@ -74,4 +75,34 @@ TEST_F(TestTagManager, FR_3_3_Delete_tag)
 
     auto updated_tags = manager.GetAllTags(user_info);
     EXPECT_EQ(updated_tags.size(), 0);
+}
+
+TEST_F(TestTagManager, FR_3_4_Get_all_notes_from_tag)
+{
+    silok::manager::TagManager tag_manager{};
+    silok::manager::NoteManager note_manager{};
+
+    note_manager.CreateNote("Test note 1", user_info);
+    note_manager.CreateNote("Test note 2", user_info);
+    note_manager.CreateNote("Test note 3", user_info);
+    tag_manager.CreateTag("test_tag", user_info);
+
+    auto notes = note_manager.GetAllNotes(user_info);
+
+    auto tags = tag_manager.GetAllTags(user_info);
+    auto& tag = tags.front();
+
+    for (auto it = notes.begin(); it != notes.begin() + 2; ++it)
+    {
+        note_manager.LinkNoteToTag(*it, tag, user_info);
+    }
+
+    auto tagged_notes = note_manager.GetAllNotesByTag(user_info, tag);
+    EXPECT_EQ(tagged_notes.size(), 2);
+
+    for (const auto& note : tagged_notes)
+    {
+        EXPECT_TRUE(std::any_of(notes.begin(), notes.end(),
+                                [&note](const silok::Note& n) { return n.id == note.id; }));
+    }
 }

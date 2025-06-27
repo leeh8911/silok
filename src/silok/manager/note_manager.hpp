@@ -17,7 +17,7 @@ class NoteManager
     void UpdateNote(Note note, const User user);
     void DeleteNote(Note note, const User user);
 
-    void LinkNoteWithTag(Note note, Tag tag, const User user);
+    void LinkNoteToTag(Note note, Tag tag, const User user);
     void UnlinkNoteFromTag(Note note, Tag tag, const User user);
 
     std::vector<Note> GetAllNotes(const User user) const;

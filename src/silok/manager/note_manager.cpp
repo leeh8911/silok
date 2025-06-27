@@ -55,7 +55,7 @@ void NoteManager::DeleteNote(Note note, const User user)
     StorageManager::Remove(note);
 }
 
-void NoteManager::LinkNoteWithTag(Note note, Tag tag, const User user)
+void NoteManager::LinkNoteToTag(Note note, Tag tag, const User user)
 {
     if (!utils::HasPermission<UserTag>(user, tag, "owner"))
     {

@@ -98,7 +98,7 @@ TEST_F(TestNoteManager, FR_2_4_Link_note_with_tag)
     EXPECT_EQ(tags.size(), 1);
     auto& tag = tags.front();
 
-    EXPECT_NO_THROW(note_manager.LinkNoteWithTag(note, tag, user_info));
+    EXPECT_NO_THROW(note_manager.LinkNoteToTag(note, tag, user_info));
 
     auto linked_notes = note_manager.GetAllNotesByTag(user_info, tag);
     EXPECT_EQ(linked_notes.size(), 1);
@@ -126,7 +126,7 @@ TEST_F(TestNoteManager, FR_2_5_Unlink_note_from_tag)
     EXPECT_EQ(tags.size(), 1);
     auto& tag = tags.front();
 
-    note_manager.LinkNoteWithTag(note, tag, user_info);
+    note_manager.LinkNoteToTag(note, tag, user_info);
 
     auto linked_notes = note_manager.GetAllNotesByTag(user_info, tag);
     EXPECT_EQ(linked_notes.size(), 1);
@@ -156,7 +156,7 @@ TEST_F(TestNoteManager, FR_2_8_Note_tag_relation_reliability)
     EXPECT_EQ(tags.size(), 1);
     auto& tag = tags.front();
 
-    note_manager.LinkNoteWithTag(note, tag, user_info);
+    note_manager.LinkNoteToTag(note, tag, user_info);
 
     auto linked_notes = note_manager.GetAllNotesByTag(user_info, tag);
     EXPECT_EQ(linked_notes.size(), 1);
