@@ -2,7 +2,7 @@
 
 #include <bcrypt.h>
 
-#include "silok/logger.hpp"
+#include "silok/domain/base_logger.hpp"
 
 namespace silok::infra
 {
