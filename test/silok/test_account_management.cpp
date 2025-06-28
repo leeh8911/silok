@@ -2,8 +2,9 @@
 
 #include <string>
 
-#include "silok/manager/account_manager.hpp"
-#include "silok/manager/storage_manager.hpp"
+#include "silok/infra/manager/account_manager.hpp"
+#include "silok/infra/manager/storage_manager.hpp"
+#include "silok/infra/password_hasher/noop_password_hasher.hpp"
 
 class TestAccountManagement : public ::testing::Test
 {
@@ -11,18 +12,20 @@ class TestAccountManagement : public ::testing::Test
     void SetUp() override
     {
         // Initialize the storage manager with a test database path
-        silok::manager::StorageManager::Initialize(":memory:", true);
+        silok::infra::StorageManager::Initialize(":memory:", true);
+        password_hasher = std::make_shared<silok::infra::NoOpPasswordHasher>();
     }
     void TearDown() override
     {
         // Reset the storage manager after each test
-        silok::manager::StorageManager::reset();
+        silok::infra::StorageManager::reset();
     }
+    silok::domain::PasswordHasherPtr password_hasher{};
 };
 
 TEST_F(TestAccountManagement, FR_4_Create_user_account)
 {
-    silok::manager::AccountManager manager{};
+    silok::infra::AccountManager manager{password_hasher};
 
     std::string username = "john doe";
     std::string password = "password123";
@@ -33,7 +36,7 @@ TEST_F(TestAccountManagement, FR_4_Create_user_account)
 
 TEST_F(TestAccountManagement, FR_5_Login_user_account)
 {
-    silok::manager::AccountManager manager{};
+    silok::infra::AccountManager manager{password_hasher};
 
     std::string username = "john doe";
     std::string password = "password123";
@@ -46,7 +49,7 @@ TEST_F(TestAccountManagement, FR_5_Login_user_account)
 }
 TEST_F(TestAccountManagement, FR_6_Is_unique_user_email_information)
 {
-    silok::manager::AccountManager manager{};
+    silok::infra::AccountManager manager{password_hasher};
     {
         std::string username = "john doe";
         std::string password = "password123";
@@ -65,7 +68,7 @@ TEST_F(TestAccountManagement, FR_6_Is_unique_user_email_information)
 
 TEST_F(TestAccountManagement, FR_7_Crypt_user_password)
 {
-    silok::manager::AccountManager manager{};
+    silok::infra::AccountManager manager{password_hasher};
 
     std::string username = "john doe";
     std::string password = "password123";
@@ -85,7 +88,7 @@ TEST_F(TestAccountManagement, FR_7_Crypt_user_password)
 
 TEST_F(TestAccountManagement, FR_19_Delete_user_account)
 {
-    silok::manager::AccountManager manager{};
+    silok::infra::AccountManager manager{password_hasher};
 
     std::string username = "john doe";
     std::string password = "password123";

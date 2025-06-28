@@ -1,12 +1,13 @@
-#include "silok/manager/project_manager.hpp"
+#include "project_manager.hpp"
 
 #include <algorithm>
 #include <vector>
 
-#include "silok/manager/storage_manager.hpp"
-#include "silok/manager/utils.hpp"
+#include "silok/domain/model.hpp"
+#include "silok/infra/manager/storage_manager.hpp"
+#include "silok/infra/manager/utils.hpp"
 
-namespace silok::manager
+namespace silok::infra
 {
 void ProjectManager::CreateProject(const User user, const std::string& project_name,
                                    std::optional<int64_t> start, std::optional<int64_t> end)
@@ -62,4 +63,4 @@ void ProjectManager::DeleteProject(const User user, Project project)
     SILOK_LOG_INFO("User {} is deleting project '{}...'", user.email, project.name.substr(0, 20));
     StorageManager::Remove(project);
 }
-}  // namespace silok::manager
+}  // namespace silok::infra

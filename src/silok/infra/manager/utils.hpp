@@ -3,9 +3,9 @@
 #include <cstdint>
 #include <string>
 
-#include "silok/model.hpp"
+#include "silok/domain/model.hpp"
 
-namespace silok::manager::utils
+namespace silok::infra::utils
 {
 template <typename T>
 struct RelationTraits;
@@ -85,4 +85,4 @@ bool HasPermission(const UserT& user, const ResourceT& resource,
     return true;
 }
 
-}  // namespace silok::manager::utils
+}  // namespace silok::infra::utils

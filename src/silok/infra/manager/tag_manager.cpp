@@ -1,13 +1,13 @@
-#include "silok/manager/tag_manager.hpp"
+#include "tag_manager.hpp"
 
 #include <algorithm>
 #include <vector>
 
-#include "silok/manager/storage_manager.hpp"
-#include "silok/manager/utils.hpp"
-#include "silok/model.hpp"
+#include "silok/domain/model.hpp"
+#include "silok/infra/manager/storage_manager.hpp"
+#include "silok/infra/manager/utils.hpp"
 
-namespace silok::manager
+namespace silok::infra
 {
 
 void TagManager::CreateTag(const User user, const std::string& tag_name)
@@ -79,4 +79,4 @@ void TagManager::DeleteTag(const User user, Tag tag)
     StorageManager::Remove(tag);
 }
 
-}  // namespace silok::manager
+}  // namespace silok::infra

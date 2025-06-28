@@ -1,10 +1,10 @@
 #pragma once
 
-#include "silok/model.hpp"
-
 #include <vector>
 
-namespace silok::manager
+#include "silok/domain/model.hpp"
+
+namespace silok::infra
 {
 class TagManager
 {
@@ -16,4 +16,4 @@ class TagManager
 
  private:
 };
-}  // namespace silok::manager
+}  // namespace silok::infra

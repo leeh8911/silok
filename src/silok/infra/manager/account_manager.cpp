@@ -1,17 +1,29 @@
-#include "silok/manager/account_manager.hpp"
+#include "account_manager.hpp"
 
 #include <iostream>
 #include <optional>
 #include <stdexcept>
 #include <string>
 
-#include "silok/crypt.hpp"
-#include "silok/jwt_utils.hpp"
-#include "silok/manager/storage_manager.hpp"
-#include "silok/model.hpp"
+#include "silok/domain/base_password_hasher.hpp"
+#include "silok/domain/model.hpp"
+#include "silok/infra/manager/storage_manager.hpp"
+#include "silok/infra/user_token.hpp"
 
-namespace silok::manager
+namespace silok::infra
 {
+
+using silok::domain::PasswordHasherPtr;
+
+AccountManager::AccountManager(PasswordHasherPtr password_hasher_)
+    : password_hasher(std::move(password_hasher_))
+{
+    if (!this->password_hasher)
+    {
+        throw std::runtime_error("Password hasher is not initialized");
+    }
+}
+
 void AccountManager::CreateAccount(const std::string& username, const std::string& password,
                                    const std::string& email)
 {
@@ -24,7 +36,7 @@ void AccountManager::CreateAccount(const std::string& username, const std::strin
     User user;
     user.name = username;
     user.email = email;
-    user.password = HashPassword(password);
+    user.password = this->password_hasher->HashPassword(password);
 
     // Insert the new user into the storage
     StorageManager::Insert(user);
@@ -37,7 +49,7 @@ std::optional<std::string> AccountManager::Login(const std::string& email,
     {
         auto user = StorageManager::FindByField<User>(&User::email, email).front();
 
-        if (CheckPassword(password, user.password))
+        if (this->password_hasher->CheckPassword(password, user.password))
         {
             // In a real application, you would generate a token here
             return EncodeUserToken(user.id);
@@ -89,4 +101,4 @@ void AccountManager::DeleteAccount(const User& user, const std::string& token)
         std::cerr << "Invalid token\n";
     }
 }
-}  // namespace silok::manager
+}  // namespace silok::infra

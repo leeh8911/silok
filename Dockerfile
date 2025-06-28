@@ -25,6 +25,16 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # ========================
+# 컴파일러 설정
+# ========================
+RUN apt update && apt install -y software-properties-common \
+    && add-apt-repository ppa:ubuntu-toolchain-r/test -y \
+    && apt update && apt install -y gcc-13 g++-13 cmake
+
+ENV CC=gcc-13
+ENV CXX=g++-13
+
+# ========================
 # GoogleTest 설치
 # ========================
 RUN git clone https://github.com/google/googletest.git /opt/googletest \

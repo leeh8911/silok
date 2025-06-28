@@ -6,7 +6,7 @@
 #include <optional>
 #include <string>
 
-namespace silok
+namespace silok::infra
 {
 
 inline std::string getSecret()
@@ -53,4 +53,4 @@ inline std::optional<int64_t> DecodeUserToken(const std::string& token_str)
     }
 }
 
-}  // namespace silok
+}  // namespace silok::infra

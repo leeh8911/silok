@@ -3,9 +3,9 @@
 #include <string>
 #include <vector>
 
-#include "silok/model.hpp"
+#include "silok/domain/model.hpp"
 
-namespace silok::manager
+namespace silok::infra
 {
 class NoteManager
 {
@@ -25,4 +25,4 @@ class NoteManager
 
  private:
 };
-}  // namespace silok::manager
+}  // namespace silok::infra
