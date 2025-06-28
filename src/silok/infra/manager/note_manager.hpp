@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "silok/model.hpp"
+#include "silok/domain/model.hpp"
 
 namespace silok::infra
 {

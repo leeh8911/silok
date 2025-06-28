@@ -5,8 +5,7 @@
 #include <string>
 
 #include "silok/domain/base_password_hasher.hpp"
-
-#include "silok/model.hpp"
+#include "silok/domain/model.hpp"
 
 namespace silok::infra
 {

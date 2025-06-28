@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <vector>
 
+#include "silok/domain/model.hpp"
 #include "silok/infra/manager/storage_manager.hpp"
 #include "silok/infra/manager/utils.hpp"
 

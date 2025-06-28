@@ -6,9 +6,9 @@
 #include <string>
 
 #include "silok/domain/base_password_hasher.hpp"
+#include "silok/domain/model.hpp"
 #include "silok/infra/manager/storage_manager.hpp"
-#include "silok/jwt_utils.hpp"
-#include "silok/model.hpp"
+#include "silok/infra/user_token.hpp"
 
 namespace silok::infra
 {

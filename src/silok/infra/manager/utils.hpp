@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 
-#include "silok/model.hpp"
+#include "silok/domain/model.hpp"
 
 namespace silok::infra::utils
 {

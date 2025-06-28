@@ -1,8 +1,8 @@
 #pragma once
 
-#include "silok/model.hpp"
-
 #include <vector>
+
+#include "silok/domain/model.hpp"
 
 namespace silok::infra
 {

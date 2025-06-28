@@ -8,8 +8,8 @@
 
 #include <sqlite_orm/sqlite_orm.h>
 
-#include "silok/logger.hpp"
-#include "silok/model.hpp"
+#include "silok/domain/base_logger.hpp"
+#include "silok/domain/model.hpp"
 
 namespace silok::infra
 {

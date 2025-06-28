@@ -1,5 +1,6 @@
 #pragma once
 
+#include <format>
 #include <memory>
 #include <string>
 
@@ -48,7 +49,7 @@ class Logger
 }  // namespace silok::domain
 
 #define SILOK_LOG(level, fmt, ...) \
-    silok::domain::Logger::GetLogger()->level(fmt::format(fmt, __VA_ARGS__))
+    silok::domain::Logger::GetLogger().level(std::format(fmt, __VA_ARGS__))
 
 #define SILOK_LOG_TRACE(fmt, ...) SILOK_LOG(Trace, fmt, __VA_ARGS__)
 #define SILOK_LOG_DEBUG(fmt, ...) SILOK_LOG(Debug, fmt, __VA_ARGS__)
