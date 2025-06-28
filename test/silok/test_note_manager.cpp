@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "silok/crypt/password_hasher.hpp"
 #include "silok/manager/account_manager.hpp"
 #include "silok/manager/note_manager.hpp"
 #include "silok/manager/storage_manager.hpp"
@@ -15,17 +16,16 @@ class TestNoteManager : public ::testing::Test
 
         account_manager.CreateAccount("john doe", "password123", "john.doe@test.com");
 
-        user_info =
-            account_manager
-                .GetAccountInfo(account_manager.Login("john.doe@test.com", "password123").value())
-                .value();
+        auto user_token = account_manager.Login("john.doe@test.com", "password123");
+        user_info = account_manager.GetAccountInfo(user_token.value()).value();
     }
     void TearDown() override
     {
         // Reset the storage manager after each test
         silok::manager::StorageManager::reset();
     }
-    silok::manager::AccountManager account_manager{};
+    silok::manager::AccountManager account_manager{
+        std::make_shared<silok::crypt::NoOpPasswordHasher>()};
     silok::User user_info{};
 };
 
