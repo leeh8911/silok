@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 #include <string>
 
 namespace silok
@@ -27,6 +28,14 @@ struct Tag
     std::string name;
 };
 
+struct Project
+{
+    int64_t id;
+    std::string name;
+    std::optional<int64_t> start;
+    std::optional<int64_t> end;
+};
+
 struct UserNote
 {
     int64_t id;
@@ -43,11 +52,26 @@ struct UserTag
     std::string role;
 };
 
+struct UserProject
+{
+    int64_t id;
+    int64_t user_id;
+    int64_t project_id;
+    std::string role;
+};
+
 struct NoteTag
 {
     int64_t id;
     int64_t note_id;
     int64_t tag_id;
+};
+
+struct NoteProject
+{
+    int64_t id;
+    int64_t note_id;
+    int64_t project_id;
 };
 
 }  // namespace silok

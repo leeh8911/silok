@@ -10,7 +10,7 @@
 namespace silok::manager
 {
 
-void TagManager::CreateTag(const std::string& tag_name, const User user)
+void TagManager::CreateTag(const User user, const std::string& tag_name)
 {
     Tag tag;
     tag.name = tag_name;
@@ -53,7 +53,7 @@ std::vector<Tag> TagManager::GetAllTags(const User user) const
     return tags;
 }
 
-void TagManager::UpdateTag(Tag tag, const User user)
+void TagManager::UpdateTag(const User user, Tag tag)
 {
     if (!utils::HasPermission<UserTag>(user, tag, "owner"))
     {
@@ -66,7 +66,7 @@ void TagManager::UpdateTag(Tag tag, const User user)
     StorageManager::Update(tag);
 }
 
-void TagManager::DeleteTag(Tag tag, const User user)
+void TagManager::DeleteTag(const User user, Tag tag)
 {
     if (!utils::HasPermission<UserTag>(user, tag, "owner"))
     {

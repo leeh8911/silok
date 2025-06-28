@@ -29,21 +29,21 @@ class TestNoteManager : public ::testing::Test
     silok::User user_info{};
 };
 
-TEST_F(TestNoteManager, FR_2_1_Create_note)
+TEST_F(TestNoteManager, FR_18_Create_note)
 {
     silok::manager::NoteManager manager{};
 
     std::string content = "This is a test note.";
 
-    EXPECT_NO_THROW(manager.CreateNote(content, user_info));
+    EXPECT_NO_THROW(manager.CreateNote(user_info, content));
 }
 
-TEST_F(TestNoteManager, FR_2_2_Update_note)
+TEST_F(TestNoteManager, FR_22_Update_note)
 {
     silok::manager::NoteManager manager{};
 
     std::string content = "This is a test note.";
-    manager.CreateNote(content, user_info);
+    manager.CreateNote(user_info, content);
 
     auto notes = manager.GetAllNotes(user_info);
     EXPECT_EQ(notes.size(), 1);
@@ -51,7 +51,7 @@ TEST_F(TestNoteManager, FR_2_2_Update_note)
     auto& note = notes.front();
 
     note.content = "This is an updated test note.";
-    manager.UpdateNote(note, user_info);
+    manager.UpdateNote(user_info, note);
 
     auto updated_notes = manager.GetAllNotes(user_info);
     EXPECT_EQ(updated_notes.size(), 1);
@@ -62,33 +62,33 @@ TEST_F(TestNoteManager, FR_2_2_Update_note)
     EXPECT_NE(note.updated_at, updated_note.updated_at);
 }
 
-TEST_F(TestNoteManager, FR_2_3_Delete_note)
+TEST_F(TestNoteManager, FR_23_Delete_note)
 {
     silok::manager::NoteManager manager{};
 
     std::string content = "This is a test note.";
-    manager.CreateNote(content, user_info);
+    manager.CreateNote(user_info, content);
 
     auto notes = manager.GetAllNotes(user_info);
     EXPECT_EQ(notes.size(), 1);
 
     auto& note = notes.front();
-    EXPECT_NO_THROW(manager.DeleteNote(note, user_info));
+    EXPECT_NO_THROW(manager.DeleteNote(user_info, note));
 
     auto deleted_notes = manager.GetAllNotes(user_info);
     EXPECT_TRUE(deleted_notes.empty());
 }
 
-TEST_F(TestNoteManager, FR_2_4_Link_note_with_tag)
+TEST_F(TestNoteManager, FR_24_Link_note_with_tag)
 {
     silok::manager::NoteManager note_manager{};
     silok::manager::TagManager tag_manager{};
 
     std::string content = "This is a test note.";
-    note_manager.CreateNote(content, user_info);
+    note_manager.CreateNote(user_info, content);
 
     std::string tag_name = "Test Tag";
-    tag_manager.CreateTag(tag_name, user_info);
+    tag_manager.CreateTag(user_info, tag_name);
 
     auto notes = note_manager.GetAllNotes(user_info);
     EXPECT_EQ(notes.size(), 1);
@@ -98,7 +98,7 @@ TEST_F(TestNoteManager, FR_2_4_Link_note_with_tag)
     EXPECT_EQ(tags.size(), 1);
     auto& tag = tags.front();
 
-    EXPECT_NO_THROW(note_manager.LinkNoteToTag(note, tag, user_info));
+    EXPECT_NO_THROW(note_manager.LinkNoteToTag(user_info, note, tag));
 
     auto linked_notes = note_manager.GetAllNotesByTag(user_info, tag);
     EXPECT_EQ(linked_notes.size(), 1);
@@ -107,16 +107,16 @@ TEST_F(TestNoteManager, FR_2_4_Link_note_with_tag)
     EXPECT_EQ(linked_note.id, note.id);
 }
 
-TEST_F(TestNoteManager, FR_2_5_Unlink_note_from_tag)
+TEST_F(TestNoteManager, FR_25_Unlink_note_from_tag)
 {
     silok::manager::NoteManager note_manager{};
     silok::manager::TagManager tag_manager{};
 
     std::string content = "This is a test note.";
-    note_manager.CreateNote(content, user_info);
+    note_manager.CreateNote(user_info, content);
 
     std::string tag_name = "Test Tag";
-    tag_manager.CreateTag(tag_name, user_info);
+    tag_manager.CreateTag(user_info, tag_name);
 
     auto notes = note_manager.GetAllNotes(user_info);
     EXPECT_EQ(notes.size(), 1);
@@ -126,27 +126,27 @@ TEST_F(TestNoteManager, FR_2_5_Unlink_note_from_tag)
     EXPECT_EQ(tags.size(), 1);
     auto& tag = tags.front();
 
-    note_manager.LinkNoteToTag(note, tag, user_info);
+    note_manager.LinkNoteToTag(user_info, note, tag);
 
     auto linked_notes = note_manager.GetAllNotesByTag(user_info, tag);
     EXPECT_EQ(linked_notes.size(), 1);
 
-    EXPECT_NO_THROW(note_manager.UnlinkNoteFromTag(note, tag, user_info));
+    EXPECT_NO_THROW(note_manager.UnlinkNoteFromTag(user_info, note, tag));
 
     linked_notes = note_manager.GetAllNotesByTag(user_info, tag);
     EXPECT_TRUE(linked_notes.empty());
 }
 
-TEST_F(TestNoteManager, FR_2_8_Note_tag_relation_reliability)
+TEST_F(TestNoteManager, FR_34_Note_tag_relation_reliability)
 {
     silok::manager::NoteManager note_manager{};
     silok::manager::TagManager tag_manager{};
 
     std::string content = "This is a test note.";
-    note_manager.CreateNote(content, user_info);
+    note_manager.CreateNote(user_info, content);
 
     std::string tag_name = "Test Tag";
-    tag_manager.CreateTag(tag_name, user_info);
+    tag_manager.CreateTag(user_info, tag_name);
 
     auto notes = note_manager.GetAllNotes(user_info);
     EXPECT_EQ(notes.size(), 1);
@@ -156,13 +156,43 @@ TEST_F(TestNoteManager, FR_2_8_Note_tag_relation_reliability)
     EXPECT_EQ(tags.size(), 1);
     auto& tag = tags.front();
 
-    note_manager.LinkNoteToTag(note, tag, user_info);
+    note_manager.LinkNoteToTag(user_info, note, tag);
 
     auto linked_notes = note_manager.GetAllNotesByTag(user_info, tag);
     EXPECT_EQ(linked_notes.size(), 1);
 
-    EXPECT_NO_THROW(note_manager.UnlinkNoteFromTag(note, tag, user_info));
+    EXPECT_NO_THROW(note_manager.UnlinkNoteFromTag(user_info, note, tag));
 
     linked_notes = note_manager.GetAllNotesByTag(user_info, tag);
     EXPECT_TRUE(linked_notes.empty());
+}
+
+TEST_F(TestNoteManager, FR_32_Get_all_notes_from_tag)
+{
+    silok::manager::TagManager tag_manager{};
+    silok::manager::NoteManager note_manager{};
+
+    note_manager.CreateNote(user_info, "Test note 1");
+    note_manager.CreateNote(user_info, "Test note 2");
+    note_manager.CreateNote(user_info, "Test note 3");
+    tag_manager.CreateTag(user_info, "test_tag");
+
+    auto notes = note_manager.GetAllNotes(user_info);
+
+    auto tags = tag_manager.GetAllTags(user_info);
+    auto& tag = tags.front();
+
+    for (auto it = notes.begin(); it != notes.begin() + 2; ++it)
+    {
+        note_manager.LinkNoteToTag(user_info, *it, tag);
+    }
+
+    auto tagged_notes = note_manager.GetAllNotesByTag(user_info, tag);
+    EXPECT_EQ(tagged_notes.size(), 2);
+
+    for (const auto& note : tagged_notes)
+    {
+        EXPECT_TRUE(std::any_of(notes.begin(), notes.end(),
+                                [&note](const silok::Note& n) { return n.id == note.id; }));
+    }
 }

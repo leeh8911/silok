@@ -9,10 +9,10 @@ namespace silok::manager
 class TagManager
 {
  public:
-    void CreateTag(const std::string& tag_name, const User user);
+    void CreateTag(const User user, const std::string& tag_name);
     std::vector<Tag> GetAllTags(const User user) const;
-    void UpdateTag(Tag tag, const User user);
-    void DeleteTag(Tag tag, const User user);
+    void UpdateTag(const User user, Tag tag);
+    void DeleteTag(const User user, Tag tag);
 
  private:
 };
