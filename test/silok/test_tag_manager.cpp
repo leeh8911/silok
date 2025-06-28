@@ -30,28 +30,28 @@ class TestTagManager : public ::testing::Test
     silok::User user_info{};
 };
 
-TEST_F(TestTagManager, FR_3_1_Create_tag)
+TEST_F(TestTagManager, FR_29_Create_tag)
 {
     silok::manager::TagManager manager{};
 
     std::string tag_name = "Test Tag";
 
-    EXPECT_NO_THROW(manager.CreateTag(tag_name, user_info));
+    EXPECT_NO_THROW(manager.CreateTag(user_info, tag_name));
 }
 
-TEST_F(TestTagManager, FR_3_2_Update_tag)
+TEST_F(TestTagManager, FR_30_Update_tag)
 {
     silok::manager::TagManager manager{};
 
     std::string tag_name = "Test Tag";
-    manager.CreateTag(tag_name, user_info);
+    manager.CreateTag(user_info, tag_name);
 
     auto tags = manager.GetAllTags(user_info);
     EXPECT_EQ(tags.size(), 1);
 
     auto& tag = tags.front();
     tag.name = "Updated Test Tag";
-    manager.UpdateTag(tag, user_info);
+    manager.UpdateTag(user_info, tag);
 
     auto updated_tags = manager.GetAllTags(user_info);
     EXPECT_EQ(updated_tags.size(), 1);
@@ -60,32 +60,32 @@ TEST_F(TestTagManager, FR_3_2_Update_tag)
     EXPECT_EQ(updated_tag.name, "Updated Test Tag");
 }
 
-TEST_F(TestTagManager, FR_3_3_Delete_tag)
+TEST_F(TestTagManager, FR_31_Delete_tag)
 {
     silok::manager::TagManager manager{};
 
     std::string tag_name = "Test Tag";
-    manager.CreateTag(tag_name, user_info);
+    manager.CreateTag(user_info, tag_name);
 
     auto tags = manager.GetAllTags(user_info);
     EXPECT_EQ(tags.size(), 1);
 
     auto& tag = tags.front();
-    manager.DeleteTag(tag, user_info);
+    manager.DeleteTag(user_info, tag);
 
     auto updated_tags = manager.GetAllTags(user_info);
     EXPECT_EQ(updated_tags.size(), 0);
 }
 
-TEST_F(TestTagManager, FR_3_4_Get_all_notes_from_tag)
+TEST_F(TestTagManager, FR_32_Get_all_notes_from_tag)
 {
     silok::manager::TagManager tag_manager{};
     silok::manager::NoteManager note_manager{};
 
-    note_manager.CreateNote("Test note 1", user_info);
-    note_manager.CreateNote("Test note 2", user_info);
-    note_manager.CreateNote("Test note 3", user_info);
-    tag_manager.CreateTag("test_tag", user_info);
+    note_manager.CreateNote(user_info, "Test note 1");
+    note_manager.CreateNote(user_info, "Test note 2");
+    note_manager.CreateNote(user_info, "Test note 3");
+    tag_manager.CreateTag(user_info, "test_tag");
 
     auto notes = note_manager.GetAllNotes(user_info);
 
@@ -94,7 +94,7 @@ TEST_F(TestTagManager, FR_3_4_Get_all_notes_from_tag)
 
     for (auto it = notes.begin(); it != notes.begin() + 2; ++it)
     {
-        note_manager.LinkNoteToTag(*it, tag, user_info);
+        note_manager.LinkNoteToTag(user_info, *it, tag);
     }
 
     auto tagged_notes = note_manager.GetAllNotesByTag(user_info, tag);
@@ -107,19 +107,19 @@ TEST_F(TestTagManager, FR_3_4_Get_all_notes_from_tag)
     }
 }
 
-TEST_F(TestTagManager, FR_3_5_Unique_tag_name)
+TEST_F(TestTagManager, FR_36_Unique_tag_name)
 {
     silok::manager::TagManager manager{};
 
     std::string tag_name = "Unique Tag";
-    manager.CreateTag(tag_name, user_info);
+    manager.CreateTag(user_info, tag_name);
 
     // Attempt to create a tag with the same name
-    manager.CreateTag(tag_name, user_info);
+    manager.CreateTag(user_info, tag_name);
     auto tags = manager.GetAllTags(user_info);
     EXPECT_EQ(tags.size(), 1);  // Ensure only one tag with the unique name exists
 
     // Create a different tag
     std::string another_tag_name = "Another Unique Tag";
-    EXPECT_NO_THROW(manager.CreateTag(another_tag_name, user_info));
+    EXPECT_NO_THROW(manager.CreateTag(user_info, another_tag_name));
 }

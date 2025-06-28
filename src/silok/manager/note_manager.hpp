@@ -12,13 +12,13 @@ class NoteManager
  public:
     NoteManager() = default;
 
-    void CreateNote(const std::string& content, const User user);
+    void CreateNote(const User user, const std::string& content);
 
-    void UpdateNote(Note note, const User user);
-    void DeleteNote(Note note, const User user);
+    void UpdateNote(const User user, Note note);
+    void DeleteNote(const User user, Note note);
 
-    void LinkNoteToTag(Note note, Tag tag, const User user);
-    void UnlinkNoteFromTag(Note note, Tag tag, const User user);
+    void LinkNoteToTag(const User user, Note note, Tag tag);
+    void UnlinkNoteFromTag(const User user, Note note, Tag tag);
 
     std::vector<Note> GetAllNotes(const User user) const;
     std::vector<Note> GetAllNotesByTag(const User user, const Tag tag) const;

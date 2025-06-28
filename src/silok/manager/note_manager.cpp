@@ -10,7 +10,7 @@
 
 namespace silok::manager
 {
-void NoteManager::CreateNote(const std::string& content, const User user)
+void NoteManager::CreateNote(const User user, const std::string& content)
 {
     Note note;
     note.content = content;
@@ -27,7 +27,7 @@ void NoteManager::CreateNote(const std::string& content, const User user)
     StorageManager::Insert(user_note);
 }
 
-void NoteManager::UpdateNote(Note note, const User user)
+void NoteManager::UpdateNote(const User user, Note note)
 {
     if (!utils::HasPermission<UserNote>(user, note, "owner"))
     {
@@ -42,7 +42,7 @@ void NoteManager::UpdateNote(Note note, const User user)
     StorageManager::Update(note);
 }
 
-void NoteManager::DeleteNote(Note note, const User user)
+void NoteManager::DeleteNote(const User user, Note note)
 {
     if (!utils::HasPermission<UserNote>(user, note, "owner"))
     {
@@ -55,7 +55,7 @@ void NoteManager::DeleteNote(Note note, const User user)
     StorageManager::Remove(note);
 }
 
-void NoteManager::LinkNoteToTag(Note note, Tag tag, const User user)
+void NoteManager::LinkNoteToTag(const User user, Note note, Tag tag)
 {
     if (!utils::HasPermission<UserTag>(user, tag, "owner"))
     {
@@ -71,7 +71,7 @@ void NoteManager::LinkNoteToTag(Note note, Tag tag, const User user)
     StorageManager::Insert(note_tag);
 }
 
-void NoteManager::UnlinkNoteFromTag(Note note, Tag tag, const User user)
+void NoteManager::UnlinkNoteFromTag(const User user, Note note, Tag tag)
 {
     if (!utils::HasPermission<UserTag>(user, tag, "owner"))
     {

@@ -20,7 +20,7 @@ class TestAccountManagement : public ::testing::Test
     }
 };
 
-TEST_F(TestAccountManagement, FR_1_1_Create_user_account)
+TEST_F(TestAccountManagement, FR_4_Create_user_account)
 {
     silok::manager::AccountManager manager{};
 
@@ -31,7 +31,7 @@ TEST_F(TestAccountManagement, FR_1_1_Create_user_account)
     EXPECT_NO_THROW(manager.CreateAccount(username, password, email));
 }
 
-TEST_F(TestAccountManagement, FR_1_2_Login_user_account)
+TEST_F(TestAccountManagement, FR_5_Login_user_account)
 {
     silok::manager::AccountManager manager{};
 
@@ -44,7 +44,7 @@ TEST_F(TestAccountManagement, FR_1_2_Login_user_account)
     auto token = manager.Login(email, password);
     EXPECT_TRUE(token.has_value());
 }
-TEST_F(TestAccountManagement, FR_1_3_Is_unique_user_email_information)
+TEST_F(TestAccountManagement, FR_6_Is_unique_user_email_information)
 {
     silok::manager::AccountManager manager{};
     {
@@ -63,7 +63,7 @@ TEST_F(TestAccountManagement, FR_1_3_Is_unique_user_email_information)
     }
 }
 
-TEST_F(TestAccountManagement, FR_1_4_Crypt_user_password)
+TEST_F(TestAccountManagement, FR_7_Crypt_user_password)
 {
     silok::manager::AccountManager manager{};
 
@@ -83,7 +83,7 @@ TEST_F(TestAccountManagement, FR_1_4_Crypt_user_password)
     EXPECT_NE(account_info->password, password);  // Password should be hashed
 }
 
-TEST_F(TestAccountManagement, FR_1_5_Delete_user_account)
+TEST_F(TestAccountManagement, FR_19_Delete_user_account)
 {
     silok::manager::AccountManager manager{};
 

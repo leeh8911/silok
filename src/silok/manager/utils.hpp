@@ -44,6 +44,23 @@ struct RelationTraits<UserTag>
     }
 };
 
+template <>
+struct RelationTraits<UserProject>
+{
+    static int64_t UserProject::* user_id()
+    {
+        return &UserProject::user_id;
+    }
+    static int64_t UserProject::* resource_id()
+    {
+        return &UserProject::project_id;
+    }
+    static std::string UserProject::* role()
+    {
+        return &UserProject::role;
+    }
+};
+
 template <typename Relation, typename UserT, typename ResourceT>
 bool HasPermission(const UserT& user, const ResourceT& resource,
                    const std::string& required_role = "owner")
