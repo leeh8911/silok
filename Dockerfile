@@ -27,9 +27,13 @@ RUN apt-get update && apt-get install -y \
 # ========================
 # 컴파일러 설정
 # ========================
-RUN apt update && apt install -y software-properties-common \
-    && add-apt-repository ppa:ubuntu-toolchain-r/test -y \
-    && apt update && apt install -y gcc-13 g++-13 cmake
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common && \
+    add-apt-repository ppa:ubuntu-toolchain-r/test -y && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends gcc-13 g++-13 cmake && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
 
 ENV CC=gcc-13
 ENV CXX=g++-13
