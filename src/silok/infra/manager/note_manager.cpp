@@ -92,6 +92,43 @@ void NoteManager::UnlinkNoteFromTag(const User user, Note note, Tag tag)
     StorageManager::Remove(note_tags.front());
 }
 
+void NoteManager::LinkNoteToProject(const User user, Note note, Project project)
+{
+    if (!utils::HasPermission<UserProject>(user, project, "owner"))
+    {
+        SILOK_LOG_ERROR("User {} does not have permission to link note ID: {} with project ID: {}",
+                        user.email, note.id, project.id);
+        return;
+    }
+
+    NoteProject note_project;
+    note_project.note_id = note.id;
+    note_project.project_id = project.id;
+
+    StorageManager::Insert(note_project);
+}
+void NoteManager::UnlinkNoteFromProject(const User user, Note note, Project project)
+{
+    if (!utils::HasPermission<UserProject>(user, project, "owner"))
+    {
+        SILOK_LOG_ERROR(
+            "User {} does not have permission to unlink note ID: {} from project ID: {}",
+            user.email, note.id, project.id);
+        return;
+    }
+
+    auto note_projects = StorageManager::FindByFields<NoteProject>(
+        &NoteProject::note_id, note.id, &NoteProject::project_id, project.id);
+
+    if (note_projects.empty())
+    {
+        SILOK_LOG_WARN("No link found between note ID: {} and project ID: {}", note.id, project.id);
+        return;
+    }
+
+    StorageManager::Remove(note_projects.front());
+}
+
 std::vector<Note> NoteManager::GetAllNotes(const User user) const
 {
     auto user_notes = StorageManager::FindByField<UserNote>(&UserNote::user_id, user.id);
@@ -116,6 +153,24 @@ std::vector<Note> NoteManager::GetAllNotesByTag(const User user, const Tag tag) 
     std::vector<int64_t> note_ids{};
     std::transform(note_tags.begin(), note_tags.end(), std::back_inserter(note_ids),
                    [](const NoteTag& nt) { return nt.note_id; });
+
+    std::vector<Note> notes = StorageManager::FindByFieldIn<Note>(&Note::id, note_ids);
+    return notes;
+}
+std::vector<Note> NoteManager::GetAllNotesByProject(const User user, const Project project) const
+{
+    if (!utils::HasPermission<UserProject>(user, project, "owner"))
+    {
+        SILOK_LOG_ERROR("User {} does not have permission to access project ID: {}", user.email,
+                        project.id);
+        return {};
+    }
+
+    auto note_projects =
+        StorageManager::FindByField<NoteProject>(&NoteProject::project_id, project.id);
+    std::vector<int64_t> note_ids{};
+    std::transform(note_projects.begin(), note_projects.end(), std::back_inserter(note_ids),
+                   [](const NoteProject& np) { return np.note_id; });
 
     std::vector<Note> notes = StorageManager::FindByFieldIn<Note>(&Note::id, note_ids);
     return notes;

@@ -72,7 +72,8 @@ TEST_F(TestTagManager, FR_31_Delete_tag)
     EXPECT_EQ(tags.size(), 1);
 
     auto& tag = tags.front();
-    manager.DeleteTag(user_info, tag);
+
+    EXPECT_NO_THROW(manager.DeleteTag(user_info, tag));
 
     auto updated_tags = manager.GetAllTags(user_info);
     EXPECT_EQ(updated_tags.size(), 0);

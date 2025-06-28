@@ -38,3 +38,44 @@ TEST_F(TestProjectManager, FR_37_Create_project)
 
     EXPECT_NO_THROW(manager.CreateProject(user_info, project_name));
 }
+
+TEST_F(TestProjectManager, FR_38_Update_project)
+{
+    silok::infra::ProjectManager manager{};
+
+    std::string project_name = "Test Project";
+    manager.CreateProject(user_info, project_name);
+
+    auto projects = manager.GetAllProjects(user_info);
+    EXPECT_EQ(projects.size(), 1);
+
+    auto project = projects.front();
+    project.name = "Updated Project Name";
+
+    EXPECT_NO_THROW(manager.UpdateProject(user_info, project));
+
+    auto updated_projects = manager.GetAllProjects(user_info);
+    EXPECT_EQ(updated_projects.size(), 1);
+
+    auto updated_project = updated_projects.front();
+    EXPECT_NE(project_name, updated_project.name);
+    EXPECT_EQ(updated_project.id, project.id);
+}
+
+TEST_F(TestProjectManager, FR_39_Delete_project)
+{
+    silok::infra::ProjectManager manager{};
+
+    std::string project_name = "Test Project";
+    manager.CreateProject(user_info, project_name);
+
+    auto projects = manager.GetAllProjects(user_info);
+    EXPECT_EQ(projects.size(), 1);
+
+    auto project = projects.front();
+
+    EXPECT_NO_THROW(manager.DeleteProject(user_info, project));
+
+    auto remaining_projects = manager.GetAllProjects(user_info);
+    EXPECT_EQ(remaining_projects.size(), 0);
+}
