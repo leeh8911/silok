@@ -19,9 +19,12 @@ class NoteManager
 
     void LinkNoteToTag(const User user, Note note, Tag tag);
     void UnlinkNoteFromTag(const User user, Note note, Tag tag);
+    void LinkNoteToProject(const User user, Note note, Project project);
+    void UnlinkNoteFromProject(const User user, Note note, Project project);
 
     std::vector<Note> GetAllNotes(const User user) const;
     std::vector<Note> GetAllNotesByTag(const User user, const Tag tag) const;
+    std::vector<Note> GetAllNotesByProject(const User user, const Project project) const;
 
  private:
 };

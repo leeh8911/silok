@@ -2,6 +2,7 @@
 
 #include "silok/infra/manager/account_manager.hpp"
 #include "silok/infra/manager/note_manager.hpp"
+#include "silok/infra/manager/project_manager.hpp"
 #include "silok/infra/manager/storage_manager.hpp"
 #include "silok/infra/manager/tag_manager.hpp"
 #include "silok/infra/password_hasher/noop_password_hasher.hpp"
@@ -192,6 +193,98 @@ TEST_F(TestNoteManager, FR_32_Get_all_notes_from_tag)
     EXPECT_EQ(tagged_notes.size(), 2);
 
     for (const auto& note : tagged_notes)
+    {
+        EXPECT_TRUE(std::any_of(notes.begin(), notes.end(),
+                                [&note](const silok::Note& n) { return n.id == note.id; }));
+    }
+}
+
+TEST_F(TestNoteManager, FR_26_Link_note_with_project)
+{
+    silok::infra::NoteManager note_manager{};
+    silok::infra::ProjectManager project_manager{};
+
+    std::string content = "This is a test note.";
+    note_manager.CreateNote(user_info, content);
+
+    std::string project_name = "Test Project";
+    int64_t start = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    int64_t end = start + 3600;  // 1 hour later
+    project_manager.CreateProject(user_info, project_name, start, end);
+
+    auto notes = note_manager.GetAllNotes(user_info);
+    EXPECT_EQ(notes.size(), 1);
+    auto& note = notes.front();
+
+    auto projects = project_manager.GetAllProjects(user_info);
+    EXPECT_EQ(projects.size(), 1);
+    auto& project = projects.front();
+
+    EXPECT_NO_THROW(note_manager.LinkNoteToProject(user_info, note, project));
+
+    auto linked_notes = note_manager.GetAllNotesByProject(user_info, project);
+    EXPECT_EQ(linked_notes.size(), 1);
+
+    auto& linked_note = linked_notes.front();
+    EXPECT_EQ(linked_note.id, note.id);
+}
+
+TEST_F(TestNoteManager, FR_27_Unlink_note_from_project)
+{
+    silok::infra::NoteManager note_manager{};
+    silok::infra::ProjectManager project_manager{};
+
+    std::string content = "This is a test note.";
+    note_manager.CreateNote(user_info, content);
+
+    std::string project_name = "Test Project";
+    int64_t start = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    int64_t end = start + 3600;  // 1 hour later
+    project_manager.CreateProject(user_info, project_name, start, end);
+
+    auto notes = note_manager.GetAllNotes(user_info);
+    EXPECT_EQ(notes.size(), 1);
+    auto& note = notes.front();
+
+    auto projects = project_manager.GetAllProjects(user_info);
+    EXPECT_EQ(projects.size(), 1);
+    auto& project = projects.front();
+
+    note_manager.LinkNoteToProject(user_info, note, project);
+
+    auto linked_notes = note_manager.GetAllNotesByProject(user_info, project);
+    EXPECT_EQ(linked_notes.size(), 1);
+
+    EXPECT_NO_THROW(note_manager.UnlinkNoteFromProject(user_info, note, project));
+
+    linked_notes = note_manager.GetAllNotesByProject(user_info, project);
+    EXPECT_TRUE(linked_notes.empty());
+}
+
+TEST_F(TestNoteManager, FR_40_Get_all_projects_from_note)
+{
+    silok::infra::NoteManager note_manager{};
+    silok::infra::ProjectManager project_manager{};
+
+    note_manager.CreateNote(user_info, "Test note 1");
+    note_manager.CreateNote(user_info, "Test note 2");
+    note_manager.CreateNote(user_info, "Test note 3");
+    project_manager.CreateProject(user_info, "test_project", 0, 0);
+
+    auto notes = note_manager.GetAllNotes(user_info);
+
+    auto projects = project_manager.GetAllProjects(user_info);
+    auto& project = projects.front();
+
+    for (auto it = notes.begin(); it != notes.begin() + 2; ++it)
+    {
+        note_manager.LinkNoteToProject(user_info, *it, project);
+    }
+
+    auto linked_notes = note_manager.GetAllNotesByProject(user_info, project);
+    EXPECT_EQ(linked_notes.size(), 2);
+
+    for (const auto& note : linked_notes)
     {
         EXPECT_TRUE(std::any_of(notes.begin(), notes.end(),
                                 [&note](const silok::Note& n) { return n.id == note.id; }));
