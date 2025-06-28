@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
+#include "silok/domain/model.hpp"
 #include "silok/infra/manager/account_manager.hpp"
 #include "silok/infra/manager/note_manager.hpp"
 #include "silok/infra/manager/storage_manager.hpp"
 #include "silok/infra/manager/tag_manager.hpp"
 #include "silok/infra/password_hasher/noop_password_hasher.hpp"
-#include "silok/model.hpp"
 
 class TestTagManager : public ::testing::Test
 {
