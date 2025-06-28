@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace silok::manager
+namespace silok::infra
 {
 class TagManager
 {
@@ -16,4 +16,4 @@ class TagManager
 
  private:
 };
-}  // namespace silok::manager
+}  // namespace silok::infra

@@ -11,7 +11,7 @@
 #include "silok/logger.hpp"
 #include "silok/model.hpp"
 
-namespace silok::manager
+namespace silok::infra
 {
 
 inline auto makeStorage(const std::string& path)
@@ -263,4 +263,4 @@ class StorageManager
     static inline std::mutex mutex_;
 };
 
-}  // namespace silok::manager
+}  // namespace silok::infra

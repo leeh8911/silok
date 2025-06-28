@@ -6,7 +6,7 @@
 
 #include "silok/model.hpp"
 
-namespace silok::manager
+namespace silok::infra
 {
 class ProjectManager
 {
@@ -22,4 +22,4 @@ class ProjectManager
     // Additional private methods or members can be added here
 };
 
-}  // namespace silok::manager
+}  // namespace silok::infra

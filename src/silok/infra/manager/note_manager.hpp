@@ -5,7 +5,7 @@
 
 #include "silok/model.hpp"
 
-namespace silok::manager
+namespace silok::infra
 {
 class NoteManager
 {
@@ -25,4 +25,4 @@ class NoteManager
 
  private:
 };
-}  // namespace silok::manager
+}  // namespace silok::infra

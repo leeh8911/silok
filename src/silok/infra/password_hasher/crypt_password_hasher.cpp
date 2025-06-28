@@ -1,10 +1,10 @@
-#include "silok/crypt/password_hasher.hpp"
+#include "noop_password_hasher.hpp"
 
 #include <bcrypt.h>
 
 #include "silok/logger.hpp"
 
-namespace silok::crypt
+namespace silok::infra
 {
 std::string CryptPasswordHasher::HashPassword(const std::string& password) const
 {
@@ -41,4 +41,4 @@ bool NoOpPasswordHasher::CheckPassword(const std::string& password, const std::s
     // No-op implementation, checks if the password matches the hash directly
     return (password + "_no_op_hash") == hash;
 }
-}  // namespace silok::crypt
+}  // namespace silok::infra

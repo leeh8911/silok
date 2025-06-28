@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 
-#include "silok/crypt/password_hasher.hpp"
-#include "silok/manager/account_manager.hpp"
-#include "silok/manager/note_manager.hpp"
-#include "silok/manager/storage_manager.hpp"
-#include "silok/manager/tag_manager.hpp"
+#include "silok/infra/manager/account_manager.hpp"
+#include "silok/infra/manager/note_manager.hpp"
+#include "silok/infra/manager/storage_manager.hpp"
+#include "silok/infra/manager/tag_manager.hpp"
+#include "silok/infra/password_hasher/noop_password_hasher.hpp"
 #include "silok/model.hpp"
 
 class TestTagManager : public ::testing::Test
@@ -13,7 +13,7 @@ class TestTagManager : public ::testing::Test
     void SetUp() override
     {
         // Initialize the storage manager with a test database path
-        silok::manager::StorageManager::Initialize(":memory:", true);
+        silok::infra::StorageManager::Initialize(":memory:", true);
 
         account_manager.CreateAccount("john doe", "password123", "john.doe@test.com");
 
@@ -23,17 +23,17 @@ class TestTagManager : public ::testing::Test
     void TearDown() override
     {
         // Reset the storage manager after each test
-        silok::manager::StorageManager::reset();
+        silok::infra::StorageManager::reset();
     }
 
-    silok::manager::AccountManager account_manager{
-        std::make_shared<silok::crypt::NoOpPasswordHasher>()};
+    silok::infra::AccountManager account_manager{
+        std::make_shared<silok::infra::NoOpPasswordHasher>()};
     silok::User user_info{};
 };
 
 TEST_F(TestTagManager, FR_29_Create_tag)
 {
-    silok::manager::TagManager manager{};
+    silok::infra::TagManager manager{};
 
     std::string tag_name = "Test Tag";
 
@@ -42,7 +42,7 @@ TEST_F(TestTagManager, FR_29_Create_tag)
 
 TEST_F(TestTagManager, FR_30_Update_tag)
 {
-    silok::manager::TagManager manager{};
+    silok::infra::TagManager manager{};
 
     std::string tag_name = "Test Tag";
     manager.CreateTag(user_info, tag_name);
@@ -63,7 +63,7 @@ TEST_F(TestTagManager, FR_30_Update_tag)
 
 TEST_F(TestTagManager, FR_31_Delete_tag)
 {
-    silok::manager::TagManager manager{};
+    silok::infra::TagManager manager{};
 
     std::string tag_name = "Test Tag";
     manager.CreateTag(user_info, tag_name);
@@ -80,7 +80,7 @@ TEST_F(TestTagManager, FR_31_Delete_tag)
 
 TEST_F(TestTagManager, FR_36_Unique_tag_name)
 {
-    silok::manager::TagManager manager{};
+    silok::infra::TagManager manager{};
 
     std::string tag_name = "Unique Tag";
     manager.CreateTag(user_info, tag_name);

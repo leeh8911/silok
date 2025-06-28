@@ -1,17 +1,21 @@
-#include "silok/manager/account_manager.hpp"
+#include "account_manager.hpp"
 
 #include <iostream>
 #include <optional>
 #include <stdexcept>
 #include <string>
 
+#include "silok/domain/base_password_hasher.hpp"
+#include "silok/infra/manager/storage_manager.hpp"
 #include "silok/jwt_utils.hpp"
-#include "silok/manager/storage_manager.hpp"
 #include "silok/model.hpp"
 
-namespace silok::manager
+namespace silok::infra
 {
-AccountManager::AccountManager(std::shared_ptr<crypt::BasePasswordHasher> password_hasher_)
+
+using silok::domain::PasswordHasherPtr;
+
+AccountManager::AccountManager(PasswordHasherPtr password_hasher_)
     : password_hasher(std::move(password_hasher_))
 {
     if (!this->password_hasher)
@@ -97,4 +101,4 @@ void AccountManager::DeleteAccount(const User& user, const std::string& token)
         std::cerr << "Invalid token\n";
     }
 }
-}  // namespace silok::manager
+}  // namespace silok::infra

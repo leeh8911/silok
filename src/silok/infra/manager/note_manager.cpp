@@ -1,14 +1,14 @@
-#include "silok/manager/note_manager.hpp"
+#include "note_manager.hpp"
 
 #include <algorithm>
 #include <chrono>
 #include <vector>
 
-#include "silok/manager/storage_manager.hpp"
-#include "silok/manager/utils.hpp"
+#include "silok/infra/manager/storage_manager.hpp"
+#include "silok/infra/manager/utils.hpp"
 #include "silok/model.hpp"
 
-namespace silok::manager
+namespace silok::infra
 {
 void NoteManager::CreateNote(const User user, const std::string& content)
 {
@@ -121,4 +121,4 @@ std::vector<Note> NoteManager::GetAllNotesByTag(const User user, const Tag tag) 
     return notes;
 }
 
-}  // namespace silok::manager
+}  // namespace silok::infra

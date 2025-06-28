@@ -4,16 +4,17 @@
 #include <optional>
 #include <string>
 
-#include "silok/crypt/password_hasher.hpp"
+#include "silok/domain/base_password_hasher.hpp"
+
 #include "silok/model.hpp"
 
-namespace silok::manager
+namespace silok::infra
 {
 
 class AccountManager
 {
  public:
-    explicit AccountManager(std::shared_ptr<crypt::BasePasswordHasher> password_hasher);
+    explicit AccountManager(silok::domain::PasswordHasherPtr password_hasher);
 
     void CreateAccount(const std::string& username, const std::string& password,
                        const std::string& email);
@@ -25,6 +26,6 @@ class AccountManager
     void DeleteAccount(const User& user, const std::string& token);
 
  private:
-    std::shared_ptr<crypt::BasePasswordHasher> password_hasher{nullptr};
+    silok::domain::PasswordHasherPtr password_hasher{nullptr};
 };
-}  // namespace silok::manager
+}  // namespace silok::infra
