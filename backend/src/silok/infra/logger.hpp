@@ -13,4 +13,4 @@ inline void SetUpLogger(const std::string& name = "silok", const std::string& le
     auto logger = std::make_shared<SpdlogLogger>(name, level, flush_on);
     silok::domain::Logger::SetLogger(logger);
 }
-}
+}  // namespace silok::infra
